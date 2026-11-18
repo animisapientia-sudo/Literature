@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>«Фауст» Й. В. Гете: інтерактивний практикум</title>
+<link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#f4ecd8;--paper2:#eadfc3;--ink:#1d1a14;--green:#1f3b2d;--green2:#2e5641;--blood:#8e1b1b;--amber:#c8862a;--line:#cbb98f;--muted:#6a5d47}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Lora',Georgia,serif;color:var(--ink);font-size:17px;line-height:1.55;
+ background:var(--paper2) repeating-linear-gradient(0deg,transparent 0 31px,#d6c7a222 31px 32px);}
+.top{background:var(--green);color:#efe2bf;padding:18px 16px 14px;text-align:center;border-bottom:4px double var(--amber)}
+.top .k{font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--amber)}
+.top h1{font-family:'Old Standard TT',Georgia,serif;font-size:30px;margin:4px 0 2px;font-weight:700}
+.top .s{font-style:italic;font-size:15px;opacity:.85}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:12px 10px;background:#e3d6b4;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.tabs button{font-family:'Old Standard TT',serif;font-size:15px;border:1.5px solid var(--green);background:var(--paper);color:var(--green);border-radius:4px;padding:5px 11px;cursor:pointer}
+.tabs button.cur{background:var(--green);color:#f4ecd8}
+.tabs button.done:not(.cur){border-color:var(--amber);box-shadow:inset 0 -3px 0 var(--amber)}
+.wrap{max-width:820px;margin:22px auto 40px;padding:0 14px}
+.page{background:var(--paper);border:1px solid var(--line);border-radius:3px;padding:28px 30px;box-shadow:0 2px 0 var(--line),0 14px 30px #0002;position:relative}
+.page:before{content:'';position:absolute;inset:8px;border:1px solid #cbb98f88;pointer-events:none}
+.num{font-family:'Old Standard TT',serif;color:var(--blood);font-size:14px;letter-spacing:.15em;text-transform:uppercase}
+h2{font-family:'Old Standard TT',serif;font-size:28px;margin:4px 0 6px;color:var(--green);line-height:1.2}
+.lead{font-style:italic;color:var(--muted);margin:0 0 16px}
+.task{background:#fffaf0;border-left:4px solid var(--amber);padding:10px 14px;margin:0 0 16px;font-size:16px}
+label.q{display:block;font-weight:600;margin:14px 0 6px;color:var(--green)}
+textarea,input[type=text]{width:100%;font-family:'Lora',serif;font-size:16px;padding:10px 12px;border:1.5px solid var(--line);border-radius:4px;background:#fffdf7;color:var(--ink);resize:vertical}
+textarea{min-height:84px}
+textarea:focus,input:focus{outline:none;border-color:var(--green2);box-shadow:0 0 0 3px #2e564122}
+.btns{display:flex;justify-content:space-between;gap:10px;margin-top:24px;flex-wrap:wrap}
+.btn{font-family:'Old Standard TT',serif;font-size:17px;padding:9px 20px;border-radius:4px;border:none;cursor:pointer;background:var(--green);color:#f4ecd8}
+.btn:hover{background:var(--green2)}
+.btn.ghost{background:transparent;color:var(--green);border:1.5px solid var(--green)}
+.btn.red{background:var(--blood)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+/* shelf */
+.shelf{display:flex;align-items:flex-end;gap:8px;padding:16px 14px 0;background:linear-gradient(#3a2a1a,#2a1d11);border-radius:4px 4px 0 0;border-bottom:12px solid #5a3d22;min-height:200px;justify-content:center;flex-wrap:wrap}
+.book{width:74px;border-radius:3px 3px 0 0;cursor:pointer;color:#f2e2b8;font-family:'Old Standard TT',serif;font-size:14px;writing-mode:vertical-rl;transform:rotate(180deg);display:flex;align-items:center;justify-content:center;padding:10px 0;border:1px solid #0004;box-shadow:inset -6px 0 0 #0002,inset 6px 0 0 #fff1;transition:.15s;text-align:center}
+.book:hover{filter:brightness(1.15)}
+.book.sel{outline:3px solid var(--amber);outline-offset:2px}
+.book.ok:after{content:'✓';writing-mode:horizontal-tb;transform:rotate(180deg);margin-bottom:6px;color:var(--amber)}
+.bookpanel{border:1.5px solid var(--line);border-top:none;padding:14px 16px;background:#fffaf0;border-radius:0 0 4px 4px}
+/* order */
+.ol{list-style:none;padding:0;margin:0}
+.ol li{border:1.5px solid var(--line);background:#fffdf7;border-radius:4px;padding:10px 12px;margin-bottom:10px}
+.ol .h{display:flex;align-items:center;gap:10px}
+.ol .n{flex:0 0 30px;height:30px;border-radius:50%;background:var(--green);color:#f4ecd8;display:grid;place-items:center;font-family:'Old Standard TT',serif;font-weight:700}
+.ol .t{flex:1;font-weight:600}
+.ol .arr button{width:32px;height:28px;border:1px solid var(--line);background:#fff;border-radius:4px;cursor:pointer;color:var(--green)}
+.ol .arr button:disabled{opacity:.3}
+.ol textarea,.ol input{margin-top:8px;min-height:56px}
+.word{font-family:'Old Standard TT',serif;font-size:22px;color:var(--blood)}
+.route{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin:0 0 16px;font-size:13px}
+.route span.st{background:var(--green);color:#f4ecd8;padding:3px 8px;border-radius:12px}
+.route span.ar{color:var(--amber)}
+/* wager table */
+.grid2{display:grid;grid-template-columns:150px 1fr 1fr;gap:8px;align-items:start}
+.grid2 .hd{font-family:'Old Standard TT',serif;font-weight:700;color:var(--green);text-align:center;padding:6px;background:#e9dcb9;border-radius:4px}
+.grid2 .rl{font-weight:600;font-size:15px;padding-top:8px;color:var(--muted)}
+.grid2 textarea{min-height:64px}
+.contract{margin-top:22px;padding:22px 24px;background:#fbf3df;border:2px solid #b79c63;border-radius:2px;box-shadow:inset 0 0 40px #c8a76533;font-family:'Old Standard TT',serif}
+.contract h3{text-align:center;margin:0 0 10px;font-size:22px;letter-spacing:.08em}
+.contract .sig{margin-top:14px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.blood{font-family:'Old Standard TT',serif;font-style:italic;color:var(--blood);font-size:24px;border-bottom:1px solid var(--blood);min-width:200px;text-align:center;min-height:34px}
+/* diary */
+.entry{border:1.5px solid var(--line);border-radius:4px;padding:12px 14px;margin-bottom:14px;background:#fffdf7;background-image:repeating-linear-gradient(transparent 0 27px,#e5d6b066 27px 28px)}
+.entry select{font-family:inherit;font-size:16px;padding:6px 8px;border:1.5px solid var(--line);border-radius:4px;background:#fff;max-width:100%}
+.entry textarea{background:transparent;min-height:110px}
+/* court */
+.def{display:grid;grid-template-columns:150px 1fr 46px;gap:10px;align-items:center;margin-top:12px}
+.def .who{font-family:'Old Standard TT',serif;font-weight:700;color:var(--green);font-size:18px}
+.def input[type=range]{width:100%;accent-color:var(--blood)}
+.def .v{font-weight:700;color:var(--blood);text-align:center;font-size:18px}
+.def textarea{grid-column:1/-1;min-height:56px}
+.bars{display:flex;gap:10px;align-items:flex-end;height:120px;margin:18px 0 6px;padding:0 6px;border-bottom:2px solid var(--green)}
+.bars div{flex:1;background:var(--blood);border-radius:3px 3px 0 0;transition:height .2s;position:relative;min-height:2px}
+.bars div span{position:absolute;bottom:-24px;left:0;right:0;text-align:center;font-size:12px;color:var(--muted)}
+.verd{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.verd button{font-family:'Old Standard TT',serif;font-size:17px;padding:8px 16px;border:1.5px solid var(--green);background:#fffdf7;border-radius:4px;cursor:pointer;color:var(--green)}
+.verd button.on{background:var(--green);color:#fff}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:12px 0}
+.sum div{border:1.5px solid var(--line);border-radius:4px;padding:8px;text-align:center;font-size:14px}
+.sum div.ok{border-color:var(--green2);background:#e6efe8}
+.note{background:#f6e7e2;border-left:4px solid var(--blood);padding:10px 14px;font-size:15px;margin:12px 0}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;padding:10px 18px;border-radius:4px;opacity:0;transition:.3s;pointer-events:none;z-index:20}
+.toast.show{opacity:1}
+.stage{border:1.5px solid var(--line);border-radius:4px;padding:12px 14px;margin-bottom:12px;background:#fffdf7}
+.stage .sh{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.stage .sn{font-family:'Old Standard TT',serif;font-weight:700;color:var(--blood);font-size:18px}
+.stage .st2{font-weight:600;color:var(--green)}
+.stage .sc{font-size:14px;color:var(--muted);font-style:italic}
+.soul{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;font-size:13px;color:var(--muted);margin:10px 0 4px}
+.soul input{width:100%;accent-color:var(--green2)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chips button{font-family:'Lora',serif;font-size:13px;padding:3px 10px;border-radius:14px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+.chips button.on{background:var(--amber);border-color:var(--amber);color:#1d1a14;font-weight:600}
+.graph{background:#fffdf7;border:1.5px solid var(--line);border-radius:4px;padding:8px;margin:6px 0 16px}
+.graph svg{width:100%;height:auto;display:block}
+.dos{display:grid;grid-template-columns:170px 1fr 1fr;gap:8px;align-items:start}
+.dos .hd{font-family:'Old Standard TT',serif;font-weight:700;text-align:center;padding:8px;border-radius:4px;color:#f4ecd8}
+.dos .rl{font-weight:600;font-size:15px;padding-top:8px;color:var(--muted)}
+.dos textarea{min-height:60px}
+.letter{margin-top:16px;padding:18px 20px;background:#fbf3df;border:1px solid #b79c63;font-family:'Old Standard TT',serif}
+.letter textarea{background:transparent;min-height:150px;font-family:'Old Standard TT',serif;font-size:17px;border-style:dashed}
+@media(max-width:600px){.dos .hd,.grid2 .hd{display:none}.dos{grid-template-columns:1fr}.dos .hd.e{display:none}.dos .rl{padding-top:12px}}
+@media(max-width:600px){.page{padding:20px 16px}h2{font-size:23px}.grid2{grid-template-columns:1fr}.grid2 .hd.e{display:none}.grid2 .rl{padding-top:12px}.def{grid-template-columns:1fr 46px}.def .who{grid-column:1/-1}.book{width:44px;font-size:12px}.shelf{gap:5px;padding:12px 8px 0}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="k">Практикум за текстом трагедії</div>
+  <h1>Йоганн Вольфганг Гете. «Фауст»</h1>
+  <div class="s">Частина перша · 8 творчих завдань</div>
+</header>
+<nav class="tabs" id="tabs"></nav>
+<div class="wrap"><main class="page" id="page"></main></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+var KEY='faust_part1_workshop_v1';
+var S;try{S=JSON.parse(localStorage.getItem(KEY))||null}catch(e){S=null}
+S=S||{p:0,a:{}};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function A(k,d){return S.a[k]!==undefined?S.a[k]:d}
+function toast(t){var e=document.getElementById('toast');e.textContent=t;e.classList.add('show');setTimeout(function(){e.classList.remove('show')},2200)}
+
+/* ---------- data ---------- */
+var BOOKS=[
+ {id:'b1',t:'Філософія',c:'#5b3a29',h:160,q:'Що Фауст каже про філософію у першому монолозі? Чому роки її вивчення не дали йому відповіді?'},
+ {id:'b2',t:'Право',c:'#2f4a3a',h:140,q:'Чому знання права не задовольняє Фауста? Що він каже про свої вчені звання і владу над учнями?'},
+ {id:'b3',t:'Медицина',c:'#6d2a2a',h:170,q:'Згадай розповідь Фауста під час великодньої прогулянки: чому люди дякують йому з батьком, а він сам вважає себе винним?'},
+ {id:'b4',t:'Теологія',c:'#2b3550',h:150,q:'Чому навіть теологія не дає Фаустові спокою? Як він реагує на великодній спів дзвонів і хорів?'},
+ {id:'b5',t:'Книга магії',c:'#7a5a12',h:185,q:'Чого Фауст чекає від магії? Що відбувається, коли він викликає Духа Землі, і як це штовхає його до думки про смерть?'}
+];
+var WORDS=[{id:'w3',t:'Сила'},{id:'w1',t:'Слово'},{id:'w4',t:'Діло'},{id:'w2',t:'Думка'}];
+var ROUTE=[
+ {id:'r4',t:'Відьомська кухня'},
+ {id:'r1',t:'Нічний кабінет Фауста'},
+ {id:'r7',t:'Вальпургієва ніч'},
+ {id:'r3',t:'Ауербахів льох'},
+ {id:'r6',t:'Сад Марти («Гретхен-питання»)'},
+ {id:'r2',t:'Великодня прогулянка за міською брамою'},
+ {id:'r8',t:'В’язниця'},
+ {id:'r5',t:'Вулиця: перша зустріч із Маргаритою'}
+];
+var MOMENTS=['Перша зустріч на вулиці','Скринька з коштовностями','Ворожіння на квітці в саду («любить — не любить»)','За прядкою («Мій спокій зник…»)','Розмова з Фаустом про віру','Біля криниці: плітки Лізхен','Смерть Валентина','У соборі','У в’язниці'];
+var DEF=[{id:'f',t:'Фауст'},{id:'m',t:'Мефістофель'},{id:'g',t:'Маргарита'},{id:'mt',t:'Марта'},{id:'s',t:'Міська громада'}];
+var WROWS=[['who','Хто укладає парі / угоду'],['stake','Що поставлено на кін'],['cond','За якої умови виграє Мефістофель'],['view','Яке уявлення про людину стоїть за парі'],['quote','Ключові слова (своїми словами або цитатою)']];
+
+var STAGES=[
+ {id:'e1',t:'Учений у відчаї',sc:'«Ніч»: монолог у кабінеті, Дух Землі, чаша з отрутою'},
+ {id:'e2',t:'Серед людей',sc:'«Перед міською брамою»: великодня прогулянка, розмова з Вагнером'},
+ {id:'e3',t:'Той, хто укладає парі',sc:'«Кабінет»: прокляття, угода з Мефістофелем'},
+ {id:'e4',t:'Помолоділий',sc:'«Відьомська кухня», «Вулиця»: дзеркало, зустріч із Маргаритою'},
+ {id:'e5',t:'Закоханий і роздвоєний',sc:'«Ліс і печера», «Сад Марти»'},
+ {id:'e6',t:'Той, хто прозрів',sc:'«Похмурий день. Поле», «В\u2019язниця»'}
+];
+var TRAITS=['жага пізнання','відчай','гордість','самотність','бунт','нетерпіння','жага насолод','пристрасть','ніжність','цинізм','сумнів','сором','каяття','відповідальність','безсилля','любов до природи','зневага до людей','співчуття'];
+var DOSS=[['look','Вік, вигляд, оточення'],['want','Чого прагне'],['fear','Що його мучить'],['know','Ставлення до знання'],['people','Ставлення до людей'],['meph','Ставлення до Мефістофеля'],['line','Ключова репліка (своїми словами)']];
+var PAGES=[
+ {t:'Початок',r:pIntro},
+ {t:'1. Кабінет',r:p1},
+ {t:'2. «На початку було…»',r:p2},
+ {t:'3. Два парі',r:p3},
+ {t:'4. Маршрут',r:p4},
+ {t:'5. Щоденник',r:p5},
+ {t:'6. Суд',r:p6},
+ {t:'7. Дві душі',r:p7},
+ {t:'8. Два портрети',r:p8},
+ {t:'Зберегти',r:pEnd}
+];
+
+/* ---------- completion ---------- */
+function filled(k){var v=S.a[k];return typeof v==='string'&&v.trim().length>3}
+function done(i){
+ switch(i){
+  case 1:return BOOKS.every(function(b){return filled('b_'+b.id)})&&filled('b_poison');
+  case 2:return !!S.a.w_touched&&WORDS.every(function(w){return filled('w_'+w.id)})&&filled('w_final');
+  case 3:return WROWS.every(function(r){return filled('h_'+r[0])&&filled('s_'+r[0])})&&!!S.a.signed;
+  case 4:return !!S.a.r_touched&&ROUTE.every(function(r){return filled('r_'+r.id)});
+  case 5:return [0,1,2].every(function(i){return S.a['d_m'+i]&&filled('d_t'+i)});
+  case 7:return STAGES.every(function(x){return S.a['soul_'+x.id]!==undefined&&(S.a['tr_'+x.id]||[]).length>0&&filled('pr_'+x.id)})&&filled('soul_final');
+  case 8:return DOSS.every(function(r){return filled('o_'+r[0])&&filled('n_'+r[0])})&&filled('same')&&filled('letter');
+  case 6:return DEF.every(function(d){return filled('c_'+d.id)})&&!!S.a.verdict&&filled('c_final');
+ }return false;
+}
+
+/* ---------- shell ---------- */
+function tabs(){
+ var t=document.getElementById('tabs');
+ t.innerHTML=PAGES.map(function(p,i){return '<button data-i="'+i+'" class="'+(i===S.p?'cur ':'')+(done(i)?'done':'')+'">'+p.t+'</button>'}).join('');
+ t.querySelectorAll('button').forEach(function(b){b.onclick=function(){go(+b.dataset.i)}});
+}
+function go(i){S.p=i;save();render();window.scrollTo({top:0,behavior:'smooth'})}
+function nav(){return '<div class="btns"><button class="btn ghost" data-go="'+(S.p-1)+'">← Назад</button><button class="btn" data-go="'+(S.p+1)+'">Далі →</button></div>'}
+function render(){var el=document.getElementById('page');el.innerHTML=PAGES[S.p].r();bind(el);tabs()}
+function bind(el){
+ el.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){go(+b.dataset.go)}});
+ el.querySelectorAll('[data-k]').forEach(function(f){f.addEventListener('input',function(){S.a[f.dataset.k]=f.value;save();tabsLight()})});
+ if(PAGES[S.p].after)PAGES[S.p].after(el);
+}
+function tabsLight(){document.querySelectorAll('#tabs button').forEach(function(b){var i=+b.dataset.i;b.classList.toggle('done',done(i))})}
+function ta(k,ph,rows){return '<textarea data-k="'+k+'" rows="'+(rows||3)+'" placeholder="'+esc(ph||'')+'">'+esc(A(k,''))+'</textarea>'}
+function head(n,title,lead){return '<div class="num">'+n+'</div><h2>'+title+'</h2>'+(lead?'<p class="lead">'+lead+'</p>':'')}
+
+/* ---------- pages ---------- */
+function pIntro(){
+ return head('Перед початком','Ласкаво просимо до кабінету доктора Фауста','Це не тест: тут немає «правильних кнопок». Важливо, наскільки уважно ти прочитав(-ла) першу частину трагедії й чи вмієш спиратися на текст.')+
+ '<label class="q">Прізвище та ім’я</label><input type="text" data-k="name" value="'+esc(A('name',''))+'">'+
+ '<label class="q">Група</label><input type="text" data-k="group" value="'+esc(A('group',''))+'">'+
+ '<div class="task"><b>Як працювати:</b> виконай 8 завдань у будь-якому порядку (вкладки вгорі). Відповіді зберігаються автоматично в цьому браузері. Наприкінці на вкладці «Зберегти» натисни <b>«Завантажити у Word»</b> і надішли файл викладачці. У кожній відповіді спирайся на конкретні епізоди, репліки чи деталі тексту.</div>'+
+ '<div class="btns"><span></span><button class="btn" data-go="1">Розпочати →</button></div>';
+}
+
+function p1(){
+ var sel=A('b_sel','b1'),b=BOOKS.filter(function(x){return x.id===sel})[0];
+ return head('Завдання 1','Полиця доктора Фауста','Фауст «пройшов» усі чотири факультети середньовічного університету, а потім узяв до рук книгу магії.')+
+ '<div class="task">Натискай на кожну книгу й відповідай на питання до неї. Книга з відповіддю отримує позначку ✓.</div>'+
+ '<div class="shelf">'+BOOKS.map(function(x){return '<div class="book'+(x.id===sel?' sel':'')+(filled('b_'+x.id)?' ok':'')+'" data-b="'+x.id+'" style="background:'+x.c+';height:'+x.h+'px">'+x.t+'</div>'}).join('')+'</div>'+
+ '<div class="bookpanel"><div class="word" style="font-size:20px">'+b.t+'</div><label class="q" style="margin-top:6px">'+b.q+'</label>'+ta('b_'+b.id,'Твоя відповідь з опорою на текст…',4)+'</div>'+
+ '<label class="q">Підсумок: що зупиняє Фауста, коли він підносить до вуст чашу з отрутою? Чому саме це?</label>'+ta('b_poison','',3)+nav();
+}
+PAGES[1].after=function(el){el.querySelectorAll('.book').forEach(function(x){x.onclick=function(){S.a.b_sel=x.dataset.b;save();render()}})};
+
+function p2(){
+ var ord=A('w_ord',WORDS.map(function(w){return w.id})),map={};WORDS.forEach(function(w){map[w.id]=w.t});
+ return head('Завдання 2','«На початку було…»','Повернувшись із прогулянки (за ним прибився пудель), Фауст береться перекладати Євангеліє від Івана і чотири рази змінює перше речення.')+
+ '<div class="task">1) Розташуй слова в тому порядку, у якому Фауст їх пробує (стрілки ▲▼). 2) Під кожним поясни, чому Фауст зупиняється на ньому або відкидає його.</div>'+
+ '<ul class="ol">'+ord.map(function(id,i){return '<li><div class="h"><span class="n">'+(i+1)+'</span><span class="t word">«На початку було '+map[id]+'»</span><span class="arr"><button data-u="'+i+'" '+(i?'':'disabled')+'>▲</button> <button data-d="'+i+'" '+(i<ord.length-1?'':'disabled')+'>▼</button></span></div>'+ta('w_'+id,'Чому?',2)+'</li>'}).join('')+'</ul>'+
+ '<label class="q">Як остаточний вибір Фауста пов’язаний з тим, що відбувається далі в цій самій сцені й з усім його шляхом?</label>'+ta('w_final','',3)+nav();
+}
+PAGES[2].after=function(el){
+ var ord=A('w_ord',WORDS.map(function(w){return w.id})).slice();
+ function mv(i,j){var t=ord[i];ord[i]=ord[j];ord[j]=t;S.a.w_ord=ord;S.a.w_touched=1;save();render()}
+ el.querySelectorAll('[data-u]').forEach(function(b){b.onclick=function(){var i=+b.dataset.u;mv(i,i-1)}});
+ el.querySelectorAll('[data-d]').forEach(function(b){b.onclick=function(){var i=+b.dataset.d;mv(i,i+1)}});
+};
+
+function p3(){
+ var g='<div class="grid2"><div></div><div class="hd">Пролог на небі</div><div class="hd">Угода в кабінеті</div>';
+ WROWS.forEach(function(r){g+='<div class="rl">'+r[1]+'</div>'+ta('h_'+r[0],'Пролог на небі…',2)+ta('s_'+r[0],'Угода в кабінеті…',2)});
+ g+='</div>';
+ var signed=S.a.signed;
+ return head('Завдання 3','Два парі','У трагедії про душу Фауста домовляються двічі: спершу Господь і Мефістофель, потім сам Фауст і Мефістофель.')+
+ '<div class="task">Порівняй обидва парі за рядками таблиці. Потім склади «договір» від імені героїв і «підпиши» його.</div>'+g+
+ '<div class="contract"><h3>ДОГОВІР</h3>'+
+ '<label class="q">Я, Мефістофель, зобов’язуюся…</label>'+ta('k_m','',2)+
+ '<label class="q">Я, Фауст, зобов’язуюся…</label>'+ta('k_f','',2)+
+ '<label class="q">Договір вважається виконаним, якщо Фауст…</label>'+ta('k_end','',2)+
+ '<div class="sig"><div><div style="font-size:14px;color:var(--muted)">Підпис Фауста</div><div class="blood">'+(signed?'Faust':'')+'</div></div>'+
+ '<button class="btn red" id="sign">'+(signed?'Підписано ✓':'Підписати кров’ю')+'</button></div>'+
+ '<label class="q">Чому Мефістофель наполягає саме на підписі кров’ю і як на це реагує Фауст?</label>'+ta('k_blood','',2)+
+ '</div>'+nav();
+}
+PAGES[3].after=function(el){var b=el.querySelector('#sign');b.onclick=function(){if(!(filled('k_m')&&filled('k_f')&&filled('k_end'))){toast('Спершу заповни всі пункти договору');return}S.a.signed=1;save();render()}};
+
+function p4(){
+ var ord=A('r_ord',ROUTE.map(function(r){return r.id})),map={};ROUTE.forEach(function(r){map[r.id]=r.t});
+ return head('Завдання 4','Маршрут Фауста й Мефістофеля','Мефістофель обіцяв показати Фаустові «малий світ, а потім великий». Ось зупинки малого світу.')+
+ '<div class="task">1) Розташуй зупинки в тому порядку, у якому вони з’являються в першій частині. 2) Для кожної запиши, що Фауст тут <b>здобуває</b> або <b>втрачає</b>, і назви одну деталь тексту.</div>'+
+ '<div class="route">'+ord.map(function(id,i){return '<span class="st">'+(i+1)+'. '+map[id].replace(/ \(.*\)/,'')+'</span>'+(i<ord.length-1?'<span class="ar">➝</span>':'')}).join('')+'</div>'+
+ '<ul class="ol">'+ord.map(function(id,i){return '<li><div class="h"><span class="n">'+(i+1)+'</span><span class="t">'+map[id]+'</span><span class="arr"><button data-u="'+i+'" '+(i?'':'disabled')+'>▲</button> <button data-d="'+i+'" '+(i<ord.length-1?'':'disabled')+'>▼</button></span></div>'+ta('r_'+id,'Здобуває / втрачає… Деталь тексту: …',2)+'</li>'}).join('')+'</ul>'+nav();
+}
+PAGES[4].after=function(el){
+ var ord=A('r_ord',ROUTE.map(function(r){return r.id})).slice();
+ function mv(i,j){var t=ord[i];ord[i]=ord[j];ord[j]=t;S.a.r_ord=ord;S.a.r_touched=1;save();render()}
+ el.querySelectorAll('[data-u]').forEach(function(b){b.onclick=function(){var i=+b.dataset.u;mv(i,i-1)}});
+ el.querySelectorAll('[data-d]').forEach(function(b){b.onclick=function(){var i=+b.dataset.d;mv(i,i+1)}});
+};
+
+function p5(){
+ var h=head('Завдання 5','Щоденник Маргарити','Гретхен не веде щоденника, але уяви, що вона довіряє папері те, чого не може сказати навіть Марті.')+
+ '<div class="task">Обери <b>три різні</b> моменти історії Маргарити й напиши від її імені три записи (5–8 речень кожен). У кожному має бути хоча б одна <b>конкретна деталь</b> із тексту. Пиши мовою, яка пасує героїні.</div>';
+ [0,1,2].forEach(function(i){
+  var cur=A('d_m'+i,'');
+  h+='<div class="entry"><label class="q" style="margin-top:0">Запис '+(i+1)+'. Момент: <select data-sel="'+i+'"><option value="">— обери —</option>'+MOMENTS.map(function(m){return '<option'+(m===cur?' selected':'')+'>'+esc(m)+'</option>'}).join('')+'</select></label>'+ta('d_t'+i,'Дорогий щоденнику…',5)+'</div>';
+ });
+ h+='<label class="q">Як змінюється мова й самовідчуття Маргарити від першого запису до останнього?</label>'+ta('d_final','',3);
+ return h+nav();
+}
+PAGES[5].after=function(el){el.querySelectorAll('[data-sel]').forEach(function(s){s.onchange=function(){var i=s.dataset.sel,v=s.value;for(var j=0;j<3;j++){if(j!=i&&S.a['d_m'+j]===v&&v){toast('Цей момент уже обрано в іншому записі');s.value=S.a['d_m'+i]||'';return}}S.a['d_m'+i]=v;save();tabsLight()}})};
+
+function p6(){
+ var h=head('Завдання 6','Суд у справі Маргарити','Маргарита в’язниці чекає страти. Хто насправді винен у її трагедії?')+
+ '<div class="task">Ти — суддя. Визнач повзунком міру провини кожного (0 — не винен, 10 — головний винуватець) і обґрунтуй її епізодами з тексту.</div>';
+ DEF.forEach(function(d){var v=A('v_'+d.id,'5');h+='<div class="def"><span class="who">'+d.t+'</span><input type="range" min="0" max="10" value="'+v+'" data-r="'+d.id+'"><span class="v" id="v_'+d.id+'">'+v+'</span>'+ta('c_'+d.id,'Обґрунтування: …',2)+'</div>'});
+ h+='<div class="bars">'+DEF.map(function(d){return '<div id="bar_'+d.id+'" style="height:'+(A('v_'+d.id,'5')*10)+'%"><span>'+d.t+'</span></div>'}).join('')+'</div><div style="height:22px"></div>';
+ var vd=A('verdict','');
+ h+='<label class="q">У фіналі звучать два вироки. З яким ти погоджуєшся?</label><div class="verd">'+
+  ['«Вона засуджена!» (Мефістофель)','«Спасенна!» (голос згори)'].map(function(t,i){return '<button data-v="'+i+'" class="'+(vd===String(i)?'on':'')+'">'+t+'</button>'}).join('')+'</div>'+
+  '<label class="q">Обґрунтуй свій вирок. Чому Маргарита відмовляється тікати з Фаустом і що це говорить про неї?</label>'+ta('c_final','',4);
+ return h+nav();
+}
+PAGES[6].after=function(el){
+ el.querySelectorAll('[data-r]').forEach(function(r){r.oninput=function(){var id=r.dataset.r;S.a['v_'+id]=r.value;save();document.getElementById('v_'+id).textContent=r.value;document.getElementById('bar_'+id).style.height=(r.value*10)+'%'}});
+ el.querySelectorAll('[data-v]').forEach(function(b){b.onclick=function(){S.a.verdict=b.dataset.v;save();render()}});
+};
+
+function graph(){
+ var W=640,H=200,L=40,R=20,T=18,B=40,n=STAGES.length,pts=[];
+ var x=function(i){return L+i*(W-L-R)/(n-1)},y=function(v){return T+v*(H-T-B)/10};
+ var g='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Графік двох душ Фауста">';
+ g+='<rect x="'+L+'" y="'+T+'" width="'+(W-L-R)+'" height="'+((H-T-B)/2)+'" fill="#2e564112"/><rect x="'+L+'" y="'+(T+(H-T-B)/2)+'" width="'+(W-L-R)+'" height="'+((H-T-B)/2)+'" fill="#8e1b1b10"/>';
+ g+='<text x="'+(L+6)+'" y="'+(T+14)+'" font-size="12" fill="#2e5641" font-style="italic">душа, що прагне ввись</text><text x="'+(L+6)+'" y="'+(H-B-6)+'" font-size="12" fill="#8e1b1b" font-style="italic">душа, що чіпляється за землю</text>';
+ g+='<line x1="'+L+'" y1="'+y(5)+'" x2="'+(W-R)+'" y2="'+y(5)+'" stroke="#cbb98f" stroke-dasharray="4 4"/>';
+ STAGES.forEach(function(s,i){var v=S.a['soul_'+s.id];g+='<text x="'+x(i)+'" y="'+(H-B+18)+'" font-size="12" text-anchor="middle" fill="#6a5d47">'+(i+1)+'</text>';if(v!==undefined)pts.push([x(i),y(+v)])});
+ if(pts.length>1)g+='<polyline points="'+pts.map(function(p){return p.join(',')}).join(' ')+'" fill="none" stroke="#c8862a" stroke-width="3" stroke-linejoin="round"/>';
+ pts.forEach(function(p){g+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="6" fill="#1f3b2d" stroke="#f4ecd8" stroke-width="2"/>'});
+ g+='<text x="'+((W+L-R)/2)+'" y="'+(H-6)+'" font-size="12" text-anchor="middle" fill="#6a5d47">етапи шляху Фауста</text></svg>';
+ return g;
+}
+function p7(){
+ var h=head('Завдання 7','«Дві душі живуть у грудях моїх»','Під час великодньої прогулянки Фауст зізнається Вагнерові: одна його душа прагне ввись, до духовного, інша жадібно чіпляється за земні насолоди. Простеж, як змінюється рівновага між ними.')+
+ '<div class="task">Для кожного етапу: 1) перемісти повзунок туди, де, на твою думку, перебуває Фауст; 2) обери 1–3 риси, які проявляються на цьому етапі; 3) підтверди свій вибір епізодом або реплікою з тексту. Графік будується сам.</div>'+
+ '<div class="graph" id="graph">'+graph()+'</div>';
+ STAGES.forEach(function(s,i){
+  var v=S.a['soul_'+s.id],tr=S.a['tr_'+s.id]||[];
+  h+='<div class="stage"><div class="sh"><span class="sn">'+(i+1)+'</span><span class="st2">'+s.t+'</span><span class="sc">'+s.sc+'</span></div>'+
+   '<div class="soul"><span>ввись</span><input type="range" min="0" max="10" value="'+(v===undefined?5:v)+'" data-soul="'+s.id+'"><span>до землі</span></div>'+
+   (v===undefined?'<div style="font-size:13px;color:var(--blood)">повзунок ще не переміщено</div>':'')+
+   '<div class="chips" data-ch="'+s.id+'">'+TRAITS.map(function(t){return '<button class="'+(tr.indexOf(t)>-1?'on':'')+'">'+t+'</button>'}).join('')+'</div>'+
+   ta('pr_'+s.id,'Доказ із тексту: …',2)+'</div>';
+ });
+ h+='<label class="q">Подивися на свій графік. Фауст у першій частині деградує, зростає чи рухається якось інакше? Що лишається в ньому незмінним?</label>'+ta('soul_final','',4);
+ return h+nav();
+}
+PAGES[7]={t:'7. Дві душі',r:p7,after:function(el){
+ el.querySelectorAll('[data-soul]').forEach(function(r){r.oninput=function(){S.a['soul_'+r.dataset.soul]=String(r.value);save();document.getElementById('graph').innerHTML=graph();tabsLight()};r.onchange=function(){render()}});
+ el.querySelectorAll('[data-ch]').forEach(function(c){var id=c.dataset.ch;c.querySelectorAll('button').forEach(function(b){b.onclick=function(){var tr=(S.a['tr_'+id]||[]).slice(),t=b.textContent,k=tr.indexOf(t);if(k>-1)tr.splice(k,1);else{if(tr.length>=3){toast('Можна обрати не більше трьох рис');return}tr.push(t)}S.a['tr_'+id]=tr;save();b.classList.toggle('on');tabsLight()}})});
+}};
+function p8(){
+ var h=head('Завдання 8','Два портрети одного героя','Порівняй Фауста, яким ми бачимо його в першій сцені, з Фаустом у фінальній сцені у в’язниці.')+
+ '<div class="task">Заповни «досьє» на обох Фаустів. Спирайся на текст: дії, репліки, ремарки, слова інших персонажів про нього.</div>'+
+ '<div class="dos"><div></div><div class="hd" style="background:var(--green)">Фауст у кабінеті<br><small style="font-weight:400">«Ніч»</small></div><div class="hd" style="background:var(--blood)">Фауст у в’язниці<br><small style="font-weight:400">«В’язниця»</small></div>';
+ DOSS.forEach(function(r){h+='<div class="rl">'+r[1]+'</div>'+ta('o_'+r[0],'Фауст у кабінеті…',2)+ta('n_'+r[0],'Фауст у в\u2019язниці…',2)});
+ h+='</div><label class="q">Що в Фаусті змінилося найбільше, а що лишилося незмінним? Чи можна сказати, що Мефістофель виграє парі в першій частині?</label>'+ta('same','',4)+
+ '<div class="letter"><label class="q" style="margin-top:0">Лист крізь час. Фауст із в’язниці пише листа собі тому, хто сидить уночі в кабінеті з чашею отрути (7–10 речень). Що він сказав би собі? Застеріг би? Чи все одно уклав би угоду?</label>'+ta('letter','Фаустові, докторові, у його кабінет…',7)+'</div>';
+ return h+nav();
+}
+PAGES[8]={t:'8. Два портрети',r:p8};
+function pEnd(){
+ var names=['Полиця Фауста','«На початку було…»','Два парі','Маршрут','Щоденник Маргарити','Суд','Дві душі','Два портрети'];
+ return head('Завершення','Зберегти й надіслати','')+
+ '<div class="sum">'+names.map(function(n,i){var ok=done(i+1);return '<div class="'+(ok?'ok':'')+'">'+(i+1)+'. '+n+'<br>'+(ok?'✓ виконано':'— не завершено')+'</div>'}).join('')+'</div>'+
+ (!(A('name','').trim())?'<div class="note">Не вказано прізвище та ім’я — повернися на вкладку «Початок».</div>':'')+
+ '<label class="q">Наостанок: що, на твою думку, означають слова Господа «Блукає людина, доки прагне» для всієї першої частини?</label>'+ta('final','',3)+
+ '<div class="btns"><button class="btn ghost" data-go="'+(S.p-1)+'">← Назад</button><span><button class="btn ghost" id="copy">Скопіювати текст</button> <button class="btn" id="dl">Завантажити у Word</button></span></div>'+
+ '<p class="lead" style="margin-top:14px">Файл з’явиться в «Завантаженнях». Надішли його викладачці. Якщо завантаження не працює, натисни «Скопіювати текст» і встав відповіді в лист або документ.</p>';
+}
+PAGES[9].after=function(el){el.querySelector('#dl').onclick=download;el.querySelector('#copy').onclick=copyAll};
+
+/* ---------- export ---------- */
+function collect(){
+ var out=[],a=S.a;
+ function sec(t){out.push({h:t})}function qa(q,v){out.push({q:q,a:(v||'').trim()||'—'})}
+ out.push({title:'«Фауст» Й. В. Гете. Практикум за першою частиною'});
+ qa('Студент(ка)',a.name);qa('Група',a.group);qa('Дата',new Date().toLocaleString('uk-UA'));
+ sec('Завдання 1. Полиця доктора Фауста');BOOKS.forEach(function(b){qa(b.t+'. '+b.q,a['b_'+b.id])});qa('Що зупиняє Фауста біля чаші з отрутою?',a.b_poison);
+ sec('Завдання 2. «На початку було…»');var wo=a.w_ord||WORDS.map(function(w){return w.id});var wm={};WORDS.forEach(function(w){wm[w.id]=w.t});
+ qa('Порядок, запропонований студентом',wo.map(function(id){return wm[id]}).join(' → ')+(a.w_touched?'':' (порядок не змінювався)'));wo.forEach(function(id){qa('«'+wm[id]+'»',a['w_'+id])});qa('Зв’язок з подальшим шляхом Фауста',a.w_final);
+ sec('Завдання 3. Два парі');WROWS.forEach(function(r){qa(r[1]+' — Пролог на небі',a['h_'+r[0]]);qa(r[1]+' — Угода в кабінеті',a['s_'+r[0]])});
+ qa('Договір. Мефістофель зобов’язується',a.k_m);qa('Договір. Фауст зобов’язується',a.k_f);qa('Договір вважається виконаним, якщо',a.k_end);qa('Підпис',a.signed?'підписано':'не підписано');qa('Чому підпис кров’ю',a.k_blood);
+ sec('Завдання 4. Маршрут');var ro=a.r_ord||ROUTE.map(function(r){return r.id});var rm={};ROUTE.forEach(function(r){rm[r.id]=r.t});
+ qa('Порядок, запропонований студентом',ro.map(function(id,i){return (i+1)+'. '+rm[id]}).join('; ')+(a.r_touched?'':' (порядок не змінювався)'));ro.forEach(function(id){qa(rm[id],a['r_'+id])});
+ sec('Завдання 5. Щоденник Маргарити');[0,1,2].forEach(function(i){qa('Запис '+(i+1)+(a['d_m'+i]?' — '+a['d_m'+i]:''),a['d_t'+i])});qa('Як змінюється Маргарита',a.d_final);
+ sec('Завдання 6. Суд у справі Маргарити');DEF.forEach(function(d){qa(d.t+' — провина '+A('v_'+d.id,'5')+'/10',a['c_'+d.id])});
+ qa('Вирок',a.verdict==='0'?'«Вона засуджена!»':a.verdict==='1'?'«Спасенна!»':'—');qa('Обґрунтування вироку',a.c_final);
+ sec('Завдання 7. «Дві душі живуть у грудях моїх»');STAGES.forEach(function(st,i){var v=a['soul_'+st.id];qa((i+1)+'. '+st.t+' ('+st.sc+')','Положення: '+(v===undefined?'не визначено':v+'/10 (0 — ввись, 10 — до землі)')+'. Риси: '+((a['tr_'+st.id]||[]).join(', ')||'—')+'. Доказ: '+((a['pr_'+st.id]||'').trim()||'—'))});qa('Висновок за графіком',a.soul_final);
+ sec('Завдання 8. Два портрети одного героя');DOSS.forEach(function(r){qa(r[1]+' — у кабінеті',a['o_'+r[0]]);qa(r[1]+' — у в\u2019язниці',a['n_'+r[0]])});qa('Що змінилося / що незмінне; чи виграє Мефістофель',a.same);qa('Лист крізь час',a.letter);
+ sec('Підсумок');qa('«Блукає людина, доки прагне»',a.final);
+ return out;
+}
+function download(){
+ var html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>Фауст</title><style>body{font-family:"Times New Roman";font-size:14pt;line-height:1.4}h1{font-size:16pt;text-align:center}h2{font-size:14pt;color:#1f3b2d;margin-top:18pt}p.q{font-weight:bold;margin:8pt 0 2pt}p.a{margin:0 0 6pt 14pt}</style></head><body>';
+ collect().forEach(function(x){if(x.title)html+='<h1>'+esc(x.title)+'</h1>';else if(x.h)html+='<h2>'+esc(x.h)+'</h2>';else html+='<p class="q">'+esc(x.q)+'</p><p class="a">'+esc(x.a).replace(/\n/g,'<br>')+'</p>'});
+ html+='</body></html>';
+ var blob=new Blob(['﻿',html],{type:'application/msword'});
+ var nm=(S.a.name||'студент').trim().replace(/[^\wА-Яа-яІіЇїЄєҐґ\- ]/g,'').replace(/\s+/g,'_');
+ var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Фауст_практикум_'+nm+'.doc';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);
+ toast('Файл завантажено');
+}
+function copyAll(){
+ var t=collect().map(function(x){return x.title?x.title:x.h?'\n'+x.h.toUpperCase():x.q+'\n'+x.a}).join('\n');
+ function fb(){var e=document.createElement('textarea');e.value=t;document.body.appendChild(e);e.select();try{document.execCommand('copy');toast('Скопійовано')}catch(er){toast('Не вдалося скопіювати')}e.remove()}
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){toast('Скопійовано')},fb);else fb();
+}
+
+render();
+})();
+</script>
+</body>
+</html>

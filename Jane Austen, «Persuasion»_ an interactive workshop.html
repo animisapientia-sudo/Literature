@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jane Austen, «Persuasion»: an interactive workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1d3557;--navy2:#2b4a73;--sea:#3f8f8a;--sea2:#d8ecea;--rose:#c4666a;--rose2:#f6e3e1;--gold:#c9a356;--cream:#fbf8f2;--ink:#22252b;--muted:#5f6670;--line:#d5dbe2}
+*{box-sizing:border-box}
+body{margin:0;font-family:'EB Garamond',Georgia,serif;font-size:19px;line-height:1.5;color:var(--ink);background:#eef2f5}
+.top{background:var(--navy);color:#f3efe6;text-align:center;padding:20px 16px 34px;position:relative;overflow:hidden}
+.top:after{content:'';position:absolute;left:0;right:0;bottom:0;height:22px;background:radial-gradient(circle at 12px -6px,transparent 16px,#eef2f5 17px) 0 0/24px 22px repeat-x}
+.top .k{font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold)}
+.top h1{font-family:'Playfair Display',Georgia,serif;font-size:34px;margin:6px 0 2px;font-weight:700}
+.top .s{font-style:italic;opacity:.85;font-size:17px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:10px;position:sticky;top:0;z-index:5;background:#eef2f5ee;backdrop-filter:blur(4px);border-bottom:1px solid var(--line)}
+.tabs button{font-family:'Playfair Display',serif;font-size:14px;border:1.5px solid var(--navy);background:#fff;color:var(--navy);border-radius:20px;padding:5px 13px;cursor:pointer}
+.tabs button.cur{background:var(--navy);color:#fff}
+.tabs button.done:not(.cur){border-color:var(--sea);background:var(--sea2)}
+.wrap{max-width:840px;margin:20px auto 40px;padding:0 14px}
+.page{background:var(--cream);border-radius:10px;padding:30px 32px;box-shadow:0 1px 0 var(--line),0 18px 40px #1d355718;border-top:6px solid var(--sea)}
+.num{font-family:'Playfair Display',serif;color:var(--rose);font-size:14px;letter-spacing:.15em;text-transform:uppercase}
+h2{font-family:'Playfair Display',serif;font-size:29px;margin:4px 0 2px;color:var(--navy);line-height:1.2}
+.h2ua{font-style:italic;color:var(--muted);margin:0 0 14px;font-size:17px}
+.task{background:#fff;border-left:4px solid var(--gold);border-radius:0 6px 6px 0;padding:12px 16px;margin:0 0 18px}
+.task p{margin:0}
+.task .ua,.ua{color:var(--muted);font-style:italic;font-size:16.5px;margin-top:6px}
+label.q{display:block;font-weight:600;margin:16px 0 4px;color:var(--navy)}
+label.q .ua{display:block;font-weight:400;margin-top:0}
+textarea,input[type=text]{width:100%;font-family:'EB Garamond',serif;font-size:18px;padding:9px 12px;border:1.5px solid var(--line);border-radius:6px;background:#fff;color:var(--ink);resize:vertical}
+textarea{min-height:70px}
+textarea:focus,input:focus{outline:none;border-color:var(--sea);box-shadow:0 0 0 3px #3f8f8a22}
+.btns{display:flex;justify-content:space-between;gap:10px;margin-top:24px;flex-wrap:wrap;align-items:center}
+.btn{font-family:'Playfair Display',serif;font-size:16px;padding:9px 22px;border-radius:24px;border:none;cursor:pointer;background:var(--navy);color:#fff}
+.btn:hover{background:var(--navy2)}
+.btn.ghost{background:transparent;color:var(--navy);border:1.5px solid var(--navy)}
+.btn.sea{background:var(--sea)}
+/* portraits */
+.card{background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:14px 16px;margin-bottom:14px}
+.card.right{border-color:var(--sea);box-shadow:inset 4px 0 0 var(--sea)}
+.card.wrong{border-color:var(--rose);box-shadow:inset 4px 0 0 var(--rose)}
+blockquote{margin:0 0 4px;font-style:italic;font-size:20px;color:var(--navy);line-height:1.4}
+blockquote:before{content:'“';color:var(--gold);font-size:30px;line-height:0;vertical-align:-10px;margin-right:2px}
+.src{font-size:14px;color:var(--muted);margin-bottom:8px}
+.ctl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:6px 0}
+select{font-family:'EB Garamond',serif;font-size:17px;padding:5px 8px;border:1.5px solid var(--line);border-radius:6px;background:#fff;color:var(--ink);max-width:100%}
+select.filled{border-color:var(--sea);background:var(--sea2)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.chips button{font-family:'EB Garamond',serif;font-size:15px;padding:2px 11px;border-radius:14px;border:1px solid var(--line);background:#f7f9fb;cursor:pointer;color:var(--ink)}
+.chips button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.mark{font-weight:700}
+.mark.ok{color:var(--sea)}.mark.no{color:var(--rose)}
+/* graph */
+.graph{background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:10px;margin:0 0 16px}
+.graph svg{width:100%;height:auto;display:block}
+.legend{display:flex;gap:18px;justify-content:center;font-size:15px;margin-top:4px}
+.legend i{display:inline-block;width:22px;height:4px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.stage{background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:12px 16px;margin-bottom:12px}
+.stage .sh{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.stage .sn{font-family:'Playfair Display',serif;font-weight:700;color:var(--rose);font-size:20px}
+.stage .st{font-weight:600;color:var(--navy);font-size:19px}
+.stage .sc{font-size:15px;color:var(--muted);font-style:italic}
+.sl{display:grid;grid-template-columns:118px 1fr 34px;gap:10px;align-items:center;margin:6px 0;font-size:15px}
+.sl input{width:100%}
+.sl .v{font-weight:700;text-align:center}
+.sl.b input{accent-color:var(--rose)}.sl.b .v{color:var(--rose)}
+.sl.vo input{accent-color:var(--navy)}.sl.vo .v{color:var(--navy)}
+.unset{font-size:13px;color:var(--rose)}
+/* wentworth */
+.ol{list-style:none;padding:0;margin:0}
+.ol li{background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;margin-bottom:10px}
+.ol .h{display:flex;gap:10px;align-items:center}
+.ol .n{flex:0 0 30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-family:'Playfair Display',serif;font-weight:700}
+.ol .t{flex:1;font-weight:500}
+.ol .arr button{width:32px;height:28px;border:1px solid var(--line);background:#fff;border-radius:5px;cursor:pointer;color:var(--navy)}
+.ol .arr button:disabled{opacity:.3}
+.temp{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
+.temp button{font-family:'EB Garamond',serif;font-size:15px;padding:3px 10px;border-radius:14px;border:1.5px solid var(--line);background:#fff;cursor:pointer}
+.ol input[type=text]{font-size:17px}
+.thermo{display:flex;height:16px;border-radius:8px;overflow:hidden;margin:4px 0 16px;border:1px solid var(--line)}
+.thermo div{flex:1}
+/* letter */
+.paper{background:#fffdf7;border:1px solid #e4d9bf;border-radius:4px;padding:22px 26px;box-shadow:0 3px 12px #0001;font-size:19px;line-height:1.75}
+.paper .sent{cursor:pointer;border-radius:3px;padding:1px 2px;transition:background .15s}
+.paper .sent:hover{outline:1px dashed var(--muted)}
+.brushes{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px;position:sticky;top:56px;z-index:3;background:var(--cream);padding:6px 0}
+.brushes button{font-family:'EB Garamond',serif;font-size:15px;padding:5px 12px;border-radius:16px;border:2px solid transparent;cursor:pointer;color:var(--ink)}
+.brushes button.on{border-color:var(--ink);font-weight:600}
+.brushes small{opacity:.75}
+/* map */
+.pmap{display:grid;grid-template-columns:110px 1fr 1fr;gap:6px;margin:6px 0 18px}
+.pmap .hd{font-family:'Playfair Display',serif;font-size:14px;text-align:center;padding:6px;border-radius:6px;color:#fff}
+.pmap .rl{font-family:'Playfair Display',serif;font-size:14px;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:6px;color:#fff;padding:6px}
+.pmap .cell{min-height:86px;border:1.5px dashed var(--line);border-radius:6px;background:#fff;padding:6px;display:flex;flex-wrap:wrap;gap:5px;align-content:flex-start}
+.pmap .cell span{background:var(--navy);color:#fff;border-radius:50%;width:28px;height:28px;display:grid;place-items:center;font-weight:700;font-size:15px}
+.pcard{background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;margin-bottom:10px}
+.pcard .h{display:flex;gap:10px;align-items:flex-start}
+.pcard .n{flex:0 0 28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:700;font-size:15px}
+.qbtns{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 4px 38px}
+.qbtns button{font-family:'EB Garamond',serif;font-size:14px;padding:3px 10px;border-radius:12px;border:1.5px solid var(--line);background:#fff;cursor:pointer}
+.qbtns button.on{background:var(--sea);border-color:var(--sea);color:#fff}
+.pcard input{margin-left:38px;width:calc(100% - 38px);font-size:17px}
+.titles{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.titles button{font-family:'Playfair Display',serif;font-size:17px;padding:8px 16px;border-radius:6px;border:1.5px solid var(--navy);background:#fff;color:var(--navy);cursor:pointer}
+.titles button.on{background:var(--navy);color:#fff}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:12px 0}
+.sum div{border:1.5px solid var(--line);border-radius:8px;padding:8px;text-align:center;font-size:15px;background:#fff}
+.sum div.ok{border-color:var(--sea);background:var(--sea2)}
+.note{background:var(--rose2);border-left:4px solid var(--rose);padding:10px 14px;font-size:16px;margin:12px 0}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 18px;border-radius:20px;opacity:0;transition:.3s;pointer-events:none;z-index:20}
+.toast.show{opacity:1}
+@media(max-width:600px){body{font-size:18px}.page{padding:22px 16px}h2{font-size:24px}.top h1{font-size:27px}.sl{grid-template-columns:90px 1fr 30px}.pmap{grid-template-columns:70px 1fr 1fr}.pmap .rl,.pmap .hd{font-size:12px}.qbtns{margin-left:0}.pcard input{margin-left:0;width:100%}.brushes{top:96px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="k">An interactive reading workshop · Інтерактивний практикум</div>
+  <h1>Jane Austen, <i>Persuasion</i> (1817)</h1>
+  <div class="s">5 tasks on character, change and the meaning of the title</div>
+</header>
+<nav class="tabs" id="tabs"></nav>
+<div class="wrap"><main class="page" id="page"></main></div>
+<div class="toast" id="toast"></div>
+<script>
+(function(){
+'use strict';
+var KEY='austen_persuasion_workshop_v1';
+var S;try{S=JSON.parse(localStorage.getItem(KEY))||null}catch(e){S=null}
+S=S||{p:0,a:{}};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function A(k,d){return S.a[k]!==undefined?S.a[k]:d}
+function filled(k){var v=S.a[k];return typeof v==='string'&&v.trim().length>2}
+function toast(t){var e=document.getElementById('toast');e.textContent=t;e.classList.add('show');setTimeout(function(){e.classList.remove('show')},2200)}
+
+/* ================= DATA ================= */
+var WHO=[{id:'sw',t:'Sir Walter Elliot'},{id:'el',t:'Elizabeth Elliot'},{id:'an',t:'Anne Elliot'},{id:'ma',t:'Mary Musgrove'},{id:'mm',t:'Mrs Musgrove'},{id:'we',t:'Mr William Elliot'}];
+var TECH=['narrator’s ironic comment','free indirect discourse','self-revealing speech','another character’s view','understatement / contrast'];
+var PORTRAITS=[
+ {id:'a',q:'Vanity was the beginning and the end of Sir Walter Elliot’s character; vanity of person and of situation.',src:'Chapter 1',ans:'sw',hide:'Sir Walter Elliot'},
+ {id:'b',q:'…her word had no weight, her convenience was always to give way — she was only Anne.',src:'Chapter 1',ans:'an',hide:'Anne'},
+ {id:'c',q:'I am so ill I can hardly speak. I have not seen a creature the whole morning!',src:'Chapter 5',ans:'ma'},
+ {id:'d',q:'Such a number of looking-glasses! oh Lord! there was no getting away from oneself.',src:'Chapter 13 (Admiral Croft speaking about the dressing-room at Kellynch)',ans:'sw'},
+ {id:'e',q:'…being very handsome, and very like himself, her influence had always been great, and they had gone on together most happily.',src:'Chapter 1',ans:'el'},
+ {id:'f',q:'…a man without heart or conscience; a designing, wary, cold-blooded being, who thinks only of himself.',src:'Chapter 21 (Mrs Smith speaking)',ans:'we'},
+ {id:'g',q:'Personal size and mental sorrow have certainly no necessary proportions.',src:'Chapter 8 (on the grief for “poor Richard”)',ans:'mm'}
+];
+PORTRAITS.forEach(function(p){if(p.hide)p.q=p.q.replace(p.hide,'_____')});
+
+var STAGES=[
+ {id:'s1',t:'Kellynch Hall',sc:'Ch. 1–4: “only Anne”; the family’s debts and the letting of Kellynch'},
+ {id:'s2',t:'Uppercross',sc:'Ch. 5–8: Wentworth returns; “so altered”'},
+ {id:'s3',t:'The walk to Winthrop',sc:'Ch. 9–10: little Walter; the hazel-nut speech; the Crofts’ gig'},
+ {id:'s4',t:'Lyme',sc:'Ch. 11–12: Captain Benwick; Mr Elliot’s look; Louisa’s fall on the Cobb'},
+ {id:'s5',t:'Bath',sc:'Ch. 13–22: Mr Elliot’s attentions; Mrs Smith; the concert'},
+ {id:'s6',t:'The White Hart',sc:'Ch. 23–24: the talk with Harville; the letter; the gravel walk'}
+];
+
+var WENT=[
+ {id:'w5',t:'After Louisa’s fall he says there is “no one so proper, so capable as Anne”.',ch:'Ch. 12'},
+ {id:'w2',t:'He silently lifts little Walter off Anne’s back.',ch:'Ch. 9'},
+ {id:'w7',t:'He writes a letter to Anne at the White Hart inn.',ch:'Ch. 23'},
+ {id:'w1',t:'He says Anne is “so altered he should not have known her again”.',ch:'Ch. 7'},
+ {id:'w4',t:'He makes the Crofts take the tired Anne home in their gig.',ch:'Ch. 10'},
+ {id:'w6',t:'At the concert he leaves abruptly when Mr Elliot claims Anne’s attention.',ch:'Ch. 20'},
+ {id:'w3',t:'He praises Louisa’s firmness in the hazel-nut speech.',ch:'Ch. 10'}
+];
+var TEMPS=[{id:'t1',t:'cold resentment',c:'#3d6aa8'},{id:'t2',t:'wounded pride',c:'#6f8fb7'},{id:'t3',t:'hidden care',c:'#c9a356'},{id:'t4',t:'jealousy',c:'#d0876a'},{id:'t5',t:'open love',c:'#c4666a'}];
+
+var LETTER=['I can listen no longer in silence.','I must speak to you by such means as are within my reach.','You pierce my soul.','I am half agony, half hope.','Tell me not that I am too late, that such precious feelings are gone for ever.','I offer myself to you again with a heart even more your own than when you almost broke it, eight years and a half ago.','Dare not say that man forgets sooner than woman, that his love has an earlier death.','I have loved none but you.','Unjust I may have been, weak and resentful I have been, but never inconstant.','You alone have brought me to Bath.','For you alone, I think and plan.','Have you not seen this?','Can you fail to have understood my wishes?','I had not waited even these ten days, could I have read your feelings, as I think you must have penetrated mine.','I can hardly write.','I am every instant hearing something which overpowers me.','You sink your voice, but I can distinguish the tones of that voice when they would be lost on others.','Too good, too excellent creature!','You do justice to us, indeed.','You do believe that there is true attachment and constancy among men.','Believe it to be most fervent, most undeviating, in F. W.'];
+var BRUSH=[{id:'h',t:'Agony & hope',ua:'біль і надія',c:'#f2c6c2'},{id:'f',t:'Confession of faults',ua:'визнання провини',c:'#f3dc9c'},{id:'c',t:'Constancy',ua:'вірність',c:'#bfe0da'},{id:'r',t:'Answer to Anne’s words',ua:'відповідь на слова Анни',c:'#c9d6ee'}];
+
+var PCARDS=[
+ {id:'p1',t:'At nineteen Anne breaks off her engagement to Wentworth, persuaded by Lady Russell.'},
+ {id:'p2',t:'Anne refuses Charles Musgrove, although Lady Russell would have welcomed the match.'},
+ {id:'p3',t:'Sir Walter is talked into retrenching, leaving Kellynch and letting it to Admiral Croft.'},
+ {id:'p4',t:'Louisa urges Henrietta not to give up her visit to Charles Hayter at Winthrop.'},
+ {id:'p5',t:'Louisa will not be talked out of jumping down the steps of the Cobb a second time.'},
+ {id:'p6',t:'Anne advises Captain Benwick to read more prose; he promises to look for the books.'},
+ {id:'p7',t:'Lady Russell encourages Anne to think of Mr Elliot as a husband.'},
+ {id:'p8',t:'Mrs Smith’s story and evidence change Anne’s opinion of Mr Elliot.'}
+];
+var QUADS=[{id:'yh',t:'Yielded → happiness'},{id:'ys',t:'Yielded → suffering'},{id:'rh',t:'Resisted → happiness'},{id:'rs',t:'Resisted → suffering'}];
+
+var PAGES=[
+ {t:'Start',r:pIntro},
+ {t:'1 · Portraits',r:p1},
+ {t:'2 · Anne’s bloom',r:p2},
+ {t:'3 · Wentworth',r:p3},
+ {t:'4 · The letter',r:p4},
+ {t:'5 · Persuasion',r:p5},
+ {t:'Save',r:pEnd}
+];
+
+/* ================= SHELL ================= */
+function done(i){
+ switch(i){
+  case 1:return PORTRAITS.every(function(p){return S.a['who_'+p.id]&&(S.a['tech_'+p.id]||[]).length&&filled('rv_'+p.id)})&&filled('p1_final');
+  case 2:return STAGES.every(function(s){return S.a['bl_'+s.id]!==undefined&&S.a['vo_'+s.id]!==undefined&&filled('pr_'+s.id)})&&filled('p2_final');
+  case 3:return !!S.a.w_touched&&WENT.every(function(w){return S.a['tp_'+w.id]&&filled('ws_'+w.id)})&&filled('p3_final');
+  case 4:var m=S.a.marks||{};return Object.keys(m).length>=6&&filled('l_turn')&&filled('l_reply');
+  case 5:return PCARDS.every(function(c){return S.a['q_'+c.id]})&&filled('p5_why')&&S.a.right!==undefined&&filled('p5_right')&&S.a.title&&filled('p5_title');
+ }return false;
+}
+function tabs(){var t=document.getElementById('tabs');t.innerHTML=PAGES.map(function(p,i){return '<button data-i="'+i+'" class="'+(i===S.p?'cur ':'')+(done(i)?'done':'')+'">'+p.t+'</button>'}).join('');t.querySelectorAll('button').forEach(function(b){b.onclick=function(){go(+b.dataset.i)}})}
+function tabsLight(){document.querySelectorAll('#tabs button').forEach(function(b){b.classList.toggle('done',done(+b.dataset.i))})}
+function go(i){S.p=i;save();render();window.scrollTo({top:0,behavior:'smooth'})}
+function render(){var el=document.getElementById('page');el.innerHTML=PAGES[S.p].r();bind(el);tabs()}
+function rerender(){var y=window.scrollY;var el=document.getElementById('page');el.innerHTML=PAGES[S.p].r();bind(el);tabs();window.scrollTo(0,y)}
+function bind(el){
+ el.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){go(+b.dataset.go)}});
+ el.querySelectorAll('[data-k]').forEach(function(f){f.addEventListener('input',function(){S.a[f.dataset.k]=f.value;save();tabsLight()})});
+ if(PAGES[S.p].after)PAGES[S.p].after(el);
+}
+function nav(){return '<div class="btns"><button class="btn ghost" data-go="'+(S.p-1)+'">← Back</button><button class="btn" data-go="'+(S.p+1)+'">Next →</button></div>'}
+function ta(k,ph,rows){return '<textarea data-k="'+k+'" rows="'+(rows||3)+'" placeholder="'+esc(ph||'')+'">'+esc(A(k,''))+'</textarea>'}
+function inp(k,ph){return '<input type="text" data-k="'+k+'" placeholder="'+esc(ph||'')+'" value="'+esc(A(k,''))+'">'}
+function head(n,en,ua){return '<div class="num">'+n+'</div><h2>'+en+'</h2><p class="h2ua">'+ua+'</p>'}
+function task(en,ua){return '<div class="task"><p>'+en+'</p><p class="ua">'+ua+'</p></div>'}
+function q(en,ua){return '<label class="q">'+en+'<span class="ua">'+ua+'</span></label>'}
+
+/* ================= PAGES ================= */
+function pIntro(){
+ return head('Before you begin','Welcome aboard!','Ласкаво просимо на борт!')+
+ q('Full name','Прізвище та ім’я')+inp('name','')+
+ q('Group','Група')+inp('group','')+
+ task('This is not a test: there are no single “right buttons”. Show how closely you have read the novel. Answer <b>in English</b> and support every answer with an episode, a line or a detail from the text. Your answers are saved automatically in this browser. When you finish, open the <b>Save</b> tab and download your work as a Word file.',
+      'Це не тест: тут немає єдиних «правильних кнопок». Покажи, наскільки уважно ти прочитав(-ла) роман. Відповідай <b>англійською</b> й підкріплюй кожну відповідь епізодом, реплікою чи деталлю з тексту. Відповіді автоматично зберігаються в цьому браузері. Наприкінці відкрий вкладку <b>Save</b> і завантаж свою роботу у файлі Word.')+
+ '<div class="btns"><span></span><button class="btn" data-go="1">Start →</button></div>';
+}
+
+/* ---- 1 Portraits ---- */
+function p1(){
+ var chk=!!S.a.checked;
+ var h=head('Task 1','The Portrait Gallery','Портретна галерея')+
+  task('Austen often reveals a character in a single sentence. For each quotation: (1) choose <b>who is portrayed</b>; (2) mark <b>one or two techniques</b> Austen uses; (3) write in a few words <b>what the line reveals</b>. Then press “Check who’s who”.',
+       'Остін часто розкриває персонажа одним реченням. Для кожної цитати: (1) обери, <b>кого змальовано</b>; (2) познач <b>один-два прийоми</b>, які використовує авторка; (3) коротко напиши, <b>що розкриває ця фраза</b>. Потім натисни «Check who’s who».');
+ PORTRAITS.forEach(function(p,i){
+  var w=A('who_'+p.id,''),tc=S.a['tech_'+p.id]||[],cls='';
+  if(chk&&w)cls=w===p.ans?' right':' wrong';
+  h+='<div class="card'+cls+'"><blockquote>'+esc(p.q)+'</blockquote><div class="src">'+(i+1)+'. '+p.src+'</div>'+
+   '<div class="ctl"><b style="font-size:16px">Who is portrayed?</b> <select data-who="'+p.id+'" class="'+(w?'filled':'')+'"><option value="">— choose —</option>'+WHO.map(function(o){return '<option value="'+o.id+'"'+(w===o.id?' selected':'')+'>'+o.t+'</option>'}).join('')+'</select>'+
+   (chk&&w?'<span class="mark '+(w===p.ans?'ok">✓':'no">✗ try again')+'</span>':'')+'</div>'+
+   '<div class="chips" data-tech="'+p.id+'">'+TECH.map(function(t){return '<button class="'+(tc.indexOf(t)>-1?'on':'')+'">'+t+'</button>'}).join('')+'</div>'+
+   inp('rv_'+p.id,'What does it reveal? / Що це розкриває?')+'</div>';
+ });
+ h+='<div class="btns" style="margin-top:4px"><button class="btn sea" id="check">Check who’s who</button></div>'+
+  q('Which portrait do you find the most ironic? How exactly does Austen build the irony (word choice, sentence structure, who is speaking)?','Який портрет здається тобі найіронічнішим? Як саме Остін творить іронію (добір слів, будова речення, хто говорить)?')+ta('p1_final','',4);
+ return h+nav();
+}
+PAGES[1].after=function(el){
+ el.querySelectorAll('[data-who]').forEach(function(s){s.onchange=function(){S.a['who_'+s.dataset.who]=s.value;save();if(S.a.checked)rerender();else{s.className=s.value?'filled':'';tabsLight()}}});
+ el.querySelectorAll('[data-tech]').forEach(function(c){var id=c.dataset.tech;c.querySelectorAll('button').forEach(function(b){b.onclick=function(){var tc=(S.a['tech_'+id]||[]).slice(),t=b.textContent,k=tc.indexOf(t);if(k>-1)tc.splice(k,1);else{if(tc.length>=2){toast('Choose at most two techniques / Не більше двох прийомів');return}tc.push(t)}S.a['tech_'+id]=tc;save();b.classList.toggle('on');tabsLight()}})});
+ el.querySelector('#check').onclick=function(){var n=PORTRAITS.filter(function(p){return S.a['who_'+p.id]}).length;if(n<PORTRAITS.length){toast('Choose a character for every quotation first / Спершу обери персонажа для кожної цитати');return}S.a.checked=1;var ok=PORTRAITS.filter(function(p){return S.a['who_'+p.id]===p.ans}).length;S.a.checkScore=ok;save();rerender();toast(ok+' / '+PORTRAITS.length+' correct')};
+};
+
+/* ---- 2 Anne's bloom ---- */
+function graph2(){
+ var W=640,H=210,L=34,R=16,T=14,B=34,n=STAGES.length;
+ function x(i){return L+i*(W-L-R)/(n-1)}function y(v){return T+(10-v)*(H-T-B)/10}
+ var g='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Anne’s bloom and voice">';
+ [0,5,10].forEach(function(v){g+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(v)+'" y2="'+y(v)+'" stroke="#d5dbe2" '+(v===5?'stroke-dasharray="4 4"':'')+'/><text x="'+(L-8)+'" y="'+(y(v)+4)+'" font-size="11" text-anchor="end" fill="#5f6670">'+v+'</text>'});
+ STAGES.forEach(function(s,i){g+='<text x="'+x(i)+'" y="'+(H-12)+'" font-size="12" text-anchor="middle" fill="#5f6670">'+s.t.replace(/^The (walk to )?/,'')+'</text>'});
+ [['bl_','#c4666a'],['vo_','#1d3557']].forEach(function(z){var pts=[];STAGES.forEach(function(s,i){var v=S.a[z[0]+s.id];if(v!==undefined)pts.push([x(i),y(+v)])});
+  if(pts.length>1)g+='<polyline points="'+pts.map(function(p){return p.join(',')}).join(' ')+'" fill="none" stroke="'+z[1]+'" stroke-width="3" stroke-linejoin="round"/>';
+  pts.forEach(function(p){g+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="5.5" fill="'+z[1]+'" stroke="#fff" stroke-width="2"/>'})});
+ return g+'</svg><div class="legend"><span><i style="background:#c4666a"></i>Bloom (looks &amp; spirits)</span><span><i style="background:#1d3557"></i>Voice (being heard, acting)</span></div>';
+}
+function p2(){
+ var h=head('Task 2','Anne’s Lost and Recovered Bloom','Втрачений і віднайдений «розквіт» Анни')+
+  task('Austen tells us that Anne’s <i>bloom</i> “had vanished early”. For each stage of the novel, set two sliders: <b>Bloom</b> (her looks and spirits) and <b>Voice</b> (how far she is heard, trusted and able to act). Then prove your choice with a detail from the text. The graph draws itself.',
+       'Остін зазначає, що «розквіт» (<i>bloom</i>) Анни «зник рано». Для кожного етапу роману встанови два повзунки: <b>Bloom</b> (її зовнішність і настрій) та <b>Voice</b> (наскільки її чують, їй довіряють, наскільки вона здатна діяти). Потім доведи свій вибір деталлю з тексту. Графік будується сам.')+
+  '<div class="graph" id="g2">'+graph2()+'</div>';
+ STAGES.forEach(function(s,i){
+  var b=S.a['bl_'+s.id],v=S.a['vo_'+s.id];
+  h+='<div class="stage"><div class="sh"><span class="sn">'+(i+1)+'</span><span class="st">'+s.t+'</span><span class="sc">'+s.sc+'</span></div>'+
+   '<div class="sl b"><span>Bloom</span><input type="range" min="0" max="10" value="'+(b===undefined?5:b)+'" data-sl="bl_'+s.id+'"><span class="v" id="v_bl_'+s.id+'">'+(b===undefined?'–':b)+'</span></div>'+
+   '<div class="sl vo"><span>Voice</span><input type="range" min="0" max="10" value="'+(v===undefined?5:v)+'" data-sl="vo_'+s.id+'"><span class="v" id="v_vo_'+s.id+'">'+(v===undefined?'–':v)+'</span></div>'+
+   inp('pr_'+s.id,'Evidence from the text / Доказ із тексту')+'</div>';
+ });
+ h+=q('Look at your graph. When and why does Anne’s bloom return? Does her voice grow together with her bloom, or before it?','Подивися на свій графік. Коли й чому до Анни повертається «розквіт»? Чи зростає її голос разом із ним чи раніше?')+ta('p2_final','',4);
+ return h+nav();
+}
+PAGES[2].after=function(el){el.querySelectorAll('[data-sl]').forEach(function(r){r.oninput=function(){var k=r.dataset.sl;S.a[k]=r.value;save();document.getElementById('v_'+k).textContent=r.value;document.getElementById('g2').innerHTML=graph2();tabsLight()}})};
+
+/* ---- 3 Wentworth ---- */
+function p3(){
+ var ord=A('w_ord',WENT.map(function(w){return w.id})),map={};WENT.forEach(function(w){map[w.id]=w});
+ var h=head('Task 3','Captain Wentworth: from Resentment to Constancy','Капітан Вентворт: від образи до вірності')+
+  task('Wentworth changes too, but we watch him only from outside, through Anne’s eyes. (1) Put his words and actions in the order in which they happen (▲▼). (2) For each, choose the feeling that you think is <b>really</b> behind it. (3) Explain in one sentence what the gesture or word shows. The colour bar below traces his emotional journey.',
+       'Вентворт теж змінюється, але ми бачимо його лише ззовні, очима Анни. (1) Розташуй його слова й вчинки в тому порядку, у якому вони відбуваються (▲▼). (2) Для кожного обери почуття, яке, на твою думку, <b>насправді</b> за ним стоїть. (3) Одним реченням поясни, що показує цей жест чи слово. Кольорова смуга внизу покаже шлях його почуттів.')+
+  '<div class="thermo" id="thermo">'+thermo(ord)+'</div>'+
+  '<div class="legend" style="flex-wrap:wrap;margin:-10px 0 14px">'+TEMPS.map(function(t){return '<span><i style="background:'+t.c+'"></i>'+t.t+'</span>'}).join('')+'</div>'+
+  '<ul class="ol">';
+ ord.forEach(function(id,i){var w=map[id],tp=A('tp_'+id,'');
+  h+='<li><div class="h"><span class="n">'+(i+1)+'</span><span class="t">'+esc(w.t)+'</span><span class="arr"><button data-u="'+i+'" '+(i?'':'disabled')+'>▲</button> <button data-d="'+i+'" '+(i<ord.length-1?'':'disabled')+'>▼</button></span></div>'+
+   '<div class="temp" data-tp="'+id+'">'+TEMPS.map(function(t){return '<button data-v="'+t.id+'" style="'+(tp===t.id?'background:'+t.c+';border-color:'+t.c+';color:#fff':'')+'">'+t.t+'</button>'}).join('')+'</div>'+
+   inp('ws_'+id,'What does this show? / Що це показує?')+'</li>';
+ });
+ h+='</ul>'+q('In the end Wentworth admits he was “proud, too proud to ask again”. Where, in your opinion, does his change really begin? Is he as “constant” as he claims?','Наприкінці Вентворт визнає, що був «гордий, надто гордий, щоб попросити знову». Де, на твою думку, насправді починається його зміна? Чи такий він «вірний», як стверджує?')+ta('p3_final','',4);
+ return h+nav();
+}
+function thermo(ord){var c={};TEMPS.forEach(function(t){c[t.id]=t.c});return ord.map(function(id){var tp=S.a['tp_'+id];return '<div style="background:'+(tp?c[tp]:'#eef2f5')+'"></div>'}).join('')}
+PAGES[3].after=function(el){
+ var ord=A('w_ord',WENT.map(function(w){return w.id})).slice();
+ function mv(i,j){var t=ord[i];ord[i]=ord[j];ord[j]=t;S.a.w_ord=ord;S.a.w_touched=1;save();rerender()}
+ el.querySelectorAll('[data-u]').forEach(function(b){b.onclick=function(){var i=+b.dataset.u;mv(i,i-1)}});
+ el.querySelectorAll('[data-d]').forEach(function(b){b.onclick=function(){var i=+b.dataset.d;mv(i,i+1)}});
+ el.querySelectorAll('[data-tp]').forEach(function(g){g.querySelectorAll('button').forEach(function(b){b.onclick=function(){S.a['tp_'+g.dataset.tp]=b.dataset.v;save();rerender()}})});
+};
+
+/* ---- 4 The letter ---- */
+function p4(){
+ var m=S.a.marks||{},br=A('brush','h'),col={},cnt={};BRUSH.forEach(function(b){col[b.id]=b.c;cnt[b.id]=0});Object.keys(m).forEach(function(k){cnt[m[k]]++});
+ var h=head('Task 4','“You pierce my soul”: Reading the Letter','«Ти пронизуєш мені душу»: читаємо лист')+
+  task('While Anne talks with Captain Harville about whether men or women love longer, Wentworth writes this letter in the same room. Choose a highlighter, then click the sentences of the letter to colour them. Click a sentence again to remove the colour. Try to use all four colours.',
+       'Поки Анна сперечається з капітаном Гарвілом, хто кохає довше, чоловіки чи жінки, Вентворт у тій самій кімнаті пише цей лист. Обери маркер і клацай на речення листа, щоб їх розфарбувати. Повторне клацання знімає колір. Спробуй використати всі чотири кольори.')+
+  '<div class="brushes">'+BRUSH.map(function(b){return '<button data-br="'+b.id+'" class="'+(br===b.id?'on':'')+'" style="background:'+b.c+'">'+b.t+' <small>/ '+b.ua+' ('+cnt[b.id]+')</small></button>'}).join('')+'</div>'+
+  '<div class="paper">'+LETTER.map(function(s,i){return '<span class="sent" data-s="'+i+'" style="'+(m[i]?'background:'+col[m[i]]:'')+'">'+esc(s)+'</span> '}).join('')+'</div>'+
+  '<p class="ua" style="margin-top:6px">Chapter 23. Text of 1817 (public domain).</p>'+
+  q('Which sentence is the emotional climax of the letter (and perhaps of the whole novel)? Why?','Яке речення є емоційною кульмінацією листа (а може, й усього роману)? Чому?')+ta('l_turn','',3)+
+  q('How does the letter answer what Anne has just said to Harville about “loving longest”? Why does Wentworth write instead of speaking?','Як лист відповідає на те, що Анна щойно сказала Гарвілові про те, хто «кохає довше»? Чому Вентворт пише, а не говорить?')+ta('l_reply','',4);
+ return h+nav();
+}
+PAGES[4].after=function(el){
+ el.querySelectorAll('[data-br]').forEach(function(b){b.onclick=function(){S.a.brush=b.dataset.br;save();rerender()}});
+ el.querySelectorAll('[data-s]').forEach(function(s){s.onclick=function(){var m=Object.assign({},S.a.marks||{}),i=s.dataset.s,br=A('brush','h');if(m[i]===br)delete m[i];else m[i]=br;S.a.marks=m;save();rerender()}});
+};
+
+/* ---- 5 Persuasion ---- */
+function p5(){
+ var h=head('Task 5','Mapping Persuasion','Карта переконань')+
+  task('The novel is full of people persuading and being persuaded. For each situation decide: did the person <b>yield</b> to persuasion or <b>resist</b> it, and did this lead to <b>happiness</b> or <b>suffering</b>? Place each card on the map with the buttons, and add a short reason.',
+       'Роман сповнений ситуацій, коли когось переконують і хтось піддається переконанню. Для кожної ситуації виріши: людина <b>піддалася</b> переконанню чи <b>опиралася</b> йому, і чи привело це до <b>щастя</b> чи до <b>страждання</b>? Розмісти кожну картку на мапі кнопками й додай коротке пояснення.');
+ var place={};QUADS.forEach(function(q){place[q.id]=[]});PCARDS.forEach(function(c,i){var v=S.a['q_'+c.id];if(v)place[v].push(i+1)});
+ function cell(id){return '<div class="cell">'+place[id].map(function(n){return '<span>'+n+'</span>'}).join('')+'</div>'}
+ h+='<div class="pmap"><div></div><div class="hd" style="background:var(--sea)">→ happiness<br><small>щастя</small></div><div class="hd" style="background:var(--rose)">→ suffering<br><small>страждання</small></div>'+
+  '<div class="rl" style="background:var(--navy)">Yielded<br>піддався</div>'+cell('yh')+cell('ys')+
+  '<div class="rl" style="background:#7a8aa0">Resisted<br>опирався</div>'+cell('rh')+cell('rs')+'</div>';
+ PCARDS.forEach(function(c,i){var v=A('q_'+c.id,'');
+  h+='<div class="pcard"><div class="h"><span class="n">'+(i+1)+'</span><span>'+esc(c.t)+'</span></div><div class="qbtns" data-q="'+c.id+'">'+QUADS.map(function(qd){return '<button data-v="'+qd.id+'" class="'+(v===qd.id?'on':'')+'">'+qd.t+'</button>'}).join('')+'</div>'+inp('qr_'+c.id,'Why? / Чому?')+'</div>';
+ });
+ h+=q('Look at the map. Is persuasion good or bad in Austen’s world? What matters more: being firm or being open to advice?','Подивися на мапу. Переконання у світі Остін — це добре чи погано? Що важливіше: бути твердим чи бути відкритим до порад?')+ta('p5_why','',3);
+ var r=S.a.right;
+ h+=q('In Chapter 23 Anne says she was right to submit to Lady Russell’s advice. Do you agree? Set the slider and explain.','У 23-му розділі Анна каже, що мала рацію, коли послухалася поради леді Рассел. Чи згоден(-на) ти? Встанови повзунок і поясни.')+
+  '<div class="sl vo" style="grid-template-columns:110px 1fr 110px"><span>she was wrong</span><input type="range" min="0" max="10" value="'+(r===undefined?5:r)+'" id="right"><span style="text-align:right">she was right</span></div>'+(r===undefined?'<div class="unset">slider not moved yet</div>':'')+ta('p5_right','',3);
+ var t=A('title','');
+ h+=q('Austen’s own working title was probably <i>The Elliots</i>; <i>Persuasion</i> was most likely chosen by her brother Henry after her death. Which title fits the novel better?','Робоча назва роману, ймовірно, була «Еліоти»; назву «Переконання», найімовірніше, обрав брат авторки Генрі вже після її смерті. Яка назва краще пасує роману?')+
+  '<div class="titles">'+['The Elliots','Persuasion','My own title'].map(function(x){return '<button data-t="'+x+'" class="'+(t===x?'on':'')+'">'+x+'</button>'}).join('')+'</div>'+
+  (t==='My own title'?inp('own_title','Your title / Твоя назва'):'')+
+  ta('p5_title','Argue your choice / Обґрунтуй вибір',4);
+ return h+nav();
+}
+PAGES[5].after=function(el){
+ el.querySelectorAll('[data-q]').forEach(function(g){g.querySelectorAll('button').forEach(function(b){b.onclick=function(){S.a['q_'+g.dataset.q]=b.dataset.v;save();rerender()}})});
+ var r=el.querySelector('#right');r.oninput=function(){S.a.right=r.value;save();tabsLight()};r.onchange=function(){rerender()};
+ el.querySelectorAll('[data-t]').forEach(function(b){b.onclick=function(){S.a.title=b.dataset.t;save();rerender()}});
+};
+
+/* ---- Save ---- */
+function pEnd(){
+ var names=['Portraits','Anne’s bloom','Wentworth','The letter','Persuasion'];
+ return head('Finish','Save and send your work','Збережи й надішли роботу')+
+  '<div class="sum">'+names.map(function(n,i){var ok=done(i+1);return '<div class="'+(ok?'ok':'')+'">'+(i+1)+'. '+n+'<br>'+(ok?'✓ done':'— not finished')+'</div>'}).join('')+'</div>'+
+  (!(A('name','').trim())?'<div class="note">Your name is missing — go back to the <b>Start</b> tab. / Не вказано ім’я — повернися на вкладку <b>Start</b>.</div>':'')+
+  q('Finally: in one or two sentences, what is this novel about for you?','Наостанок: про що для тебе цей роман (одне-два речення)?')+ta('final','',3)+
+  '<div class="btns"><button class="btn ghost" data-go="'+(S.p-1)+'">← Back</button><span><button class="btn ghost" id="copy">Copy text</button> <button class="btn" id="dl">Download as Word</button></span></div>'+
+  '<p class="ua" style="margin-top:14px">The file will appear in your Downloads. Send it to your teacher. If the download does not work, press “Copy text” and paste your answers into an e-mail or a document.<br>Файл з’явиться в «Завантаженнях». Надішли його викладачці. Якщо завантаження не працює, натисни «Copy text» і встав відповіді в лист або документ.</p>';
+}
+PAGES[6].after=function(el){el.querySelector('#dl').onclick=download;el.querySelector('#copy').onclick=copyAll};
+
+/* ================= EXPORT ================= */
+function collect(){
+ var a=S.a,out=[];function sec(t){out.push({h:t})}function qa(x,v){out.push({q:x,a:(v==null?'':String(v)).trim()||'—'})}
+ var whoN={};WHO.forEach(function(w){whoN[w.id]=w.t});
+ out.push({title:'Jane Austen, Persuasion: interactive workshop'});
+ qa('Student',a.name);qa('Group',a.group);qa('Date',new Date().toLocaleString('uk-UA'));
+ sec('Task 1. The Portrait Gallery');
+ PORTRAITS.forEach(function(p,i){var w=a['who_'+p.id];qa((i+1)+'. “'+p.q+'” ('+p.src+')','Who: '+(w?whoN[w]+(w===p.ans?' (correct)':' (incorrect; correct: '+whoN[p.ans]+')'):'—')+'. Techniques: '+((a['tech_'+p.id]||[]).join(', ')||'—')+'. Reveals: '+((a['rv_'+p.id]||'').trim()||'—'))});
+ qa('Self-check used',a.checked?'yes':'no');qa('The most ironic portrait',a.p1_final);
+ sec('Task 2. Anne’s Lost and Recovered Bloom');
+ STAGES.forEach(function(s,i){qa((i+1)+'. '+s.t+' ('+s.sc+')','Bloom: '+(a['bl_'+s.id]!==undefined?a['bl_'+s.id]:'—')+'/10; Voice: '+(a['vo_'+s.id]!==undefined?a['vo_'+s.id]:'—')+'/10. Evidence: '+((a['pr_'+s.id]||'').trim()||'—'))});
+ qa('Conclusion',a.p2_final);
+ sec('Task 3. Captain Wentworth: from Resentment to Constancy');
+ var ord=a.w_ord||WENT.map(function(w){return w.id}),wm={},tm={};WENT.forEach(function(w){wm[w.id]=w});TEMPS.forEach(function(t){tm[t.id]=t.t});
+ qa('Order chosen by the student'+(a.w_touched?'':' (not changed)'),ord.map(function(id,i){return (i+1)+'. '+wm[id].t+' ['+wm[id].ch+']'}).join(' | '));
+ ord.forEach(function(id,i){qa((i+1)+'. '+wm[id].t,'Feeling: '+(tm[a['tp_'+id]]||'—')+'. Shows: '+((a['ws_'+id]||'').trim()||'—'))});
+ qa('Where does his change begin?',a.p3_final);
+ sec('Task 4. Reading the Letter');
+ var m=a.marks||{};BRUSH.forEach(function(b){var ss=Object.keys(m).filter(function(k){return m[k]===b.id}).sort(function(x,y){return x-y}).map(function(k){return '“'+LETTER[k]+'”'});qa(b.t,ss.join(' ')||'—')});
+ qa('Emotional climax',a.l_turn);qa('Answer to Anne’s words to Harville',a.l_reply);
+ sec('Task 5. Mapping Persuasion');
+ var qn={};QUADS.forEach(function(x){qn[x.id]=x.t});
+ PCARDS.forEach(function(c,i){qa((i+1)+'. '+c.t,(qn[a['q_'+c.id]]||'—')+'. Why: '+((a['qr_'+c.id]||'').trim()||'—'))});
+ qa('Is persuasion good or bad?',a.p5_why);qa('Was Anne right to yield? (0 = wrong, 10 = right)',(a.right!==undefined?a.right+'/10. ':'')+((a.p5_right||'').trim()||'—'));
+ qa('Title',(a.title||'—')+(a.title==='My own title'&&a.own_title?': '+a.own_title:'')+'. '+((a.p5_title||'').trim()||''));
+ sec('Final reflection');qa('What is the novel about for me?',a.final);
+ return out;
+}
+function download(){
+ var html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>Persuasion</title><style>body{font-family:"Times New Roman";font-size:13pt;line-height:1.4}h1{font-size:16pt;text-align:center}h2{font-size:14pt;color:#1d3557;margin-top:18pt}p.q{font-weight:bold;margin:8pt 0 2pt}p.a{margin:0 0 6pt 14pt}</style></head><body>';
+ collect().forEach(function(x){if(x.title)html+='<h1>'+esc(x.title)+'</h1>';else if(x.h)html+='<h2>'+esc(x.h)+'</h2>';else html+='<p class="q">'+esc(x.q)+'</p><p class="a">'+esc(x.a).replace(/\n/g,'<br>')+'</p>'});
+ html+='</body></html>';
+ var blob=new Blob(['﻿',html],{type:'application/msword'});
+ var nm=(S.a.name||'student').trim().replace(/[^\wА-Яа-яІіЇїЄєҐґ\- ]/g,'').replace(/\s+/g,'_');
+ var l=document.createElement('a');l.href=URL.createObjectURL(blob);l.download='Persuasion_workshop_'+nm+'.doc';document.body.appendChild(l);l.click();setTimeout(function(){URL.revokeObjectURL(l.href);l.remove()},500);
+ toast('File downloaded / Файл завантажено');
+}
+function copyAll(){
+ var t=collect().map(function(x){return x.title?x.title:x.h?'\n'+x.h.toUpperCase():x.q+'\n'+x.a}).join('\n');
+ function fb(){var e=document.createElement('textarea');e.value=t;document.body.appendChild(e);e.select();try{document.execCommand('copy');toast('Copied / Скопійовано')}catch(er){toast('Copy failed')}e.remove()}
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){toast('Copied / Скопійовано')},fb);else fb();
+}
+render();
+})();
+</script>
+</body>
+</html>
