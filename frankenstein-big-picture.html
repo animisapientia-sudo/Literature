@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Frankenstein The Big Picture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* Layout: night-dark page; an old explorer's chart on the left, a parchment field notebook on the right; final tasks below. */
+:root{
+  --night:#15120f; --night-2:#211c17; --bone:#ece4d4; --bone-dim:#b9ae9a;
+  --parch:#f1e6cc; --parch-2:#e6d6b2; --sea:#cfd6cf; --ink:#33261a; --ink-soft:#6b5640;
+  --victor:#a1252b; --creature:#226f66; --candle:#d9a032; --walton:#3d4f7a;
+  --ok:#2f6b2f; --bad:#a1252b;
+  --display:"IM Fell English", "Iowan Old Style", Georgia, serif;
+  --sc:"IM Fell English SC", "Iowan Old Style", Georgia, serif;
+  --body:"Spectral", "Iowan Old Style", Georgia, serif;
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--night);color:var(--bone);font-family:var(--body);font-size:17px;line-height:1.55;
+  background-image:radial-gradient(1200px 600px at 70% -10%, #2a231c 0%, transparent 60%);}
+a{color:var(--candle)}
+button,input,textarea,select{font:inherit}
+:focus-visible{outline:3px solid var(--candle);outline-offset:2px}
+.wrap{max-width:1360px;margin:0 auto;padding:0 20px}
+header.top{padding:28px 0 12px;display:grid;grid-template-columns:1fr auto;gap:20px 32px;align-items:end}
+.eyebrow{font-family:var(--sc);letter-spacing:.08em;color:var(--candle);font-size:15px;margin:0 0 4px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(34px,5vw,58px);line-height:1.02;margin:0;text-wrap:balance}
+h1 em{color:var(--bone-dim)}
+.sub{color:var(--bone-dim);margin:8px 0 0;max-width:70ch}
+.student{display:flex;flex-direction:column;gap:10px;min-width:280px}
+.student label{font-family:var(--sc);font-size:14px;letter-spacing:.06em;color:var(--bone-dim)}
+.student input{background:var(--night-2);border:1px solid #4a3f33;color:var(--bone);padding:8px 12px;border-radius:6px;width:100%}
+.meters{display:flex;gap:18px;font-variant-numeric:tabular-nums;font-size:15px;color:var(--bone-dim)}
+.meters b{color:var(--bone);font-weight:600}
+.bar{height:6px;background:#3a3129;border-radius:3px;overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--victor),var(--candle),var(--creature));transition:width .4s}
+.how{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:18px 0 20px;padding:0;list-style:none;counter-reset:h}
+.how li{background:var(--night-2);border:1px solid #3a3129;border-radius:8px;padding:10px 12px;font-size:14.5px;line-height:1.4;color:var(--bone-dim);counter-increment:h}
+.how li::before{content:counter(h);font-family:var(--display);font-size:22px;color:var(--candle);display:block;line-height:1}
+.how li b{color:var(--bone);font-weight:600}
+
+.atlas{display:grid;grid-template-columns:minmax(0,1.42fr) minmax(360px,1fr);gap:20px;align-items:start}
+.mapcard{position:sticky;top:12px;background:var(--parch);color:var(--ink);border-radius:10px;padding:12px;box-shadow:0 10px 40px rgba(0,0,0,.45), inset 0 0 0 1px #c9b48a}
+.maphead{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;padding:2px 6px 10px}
+.maphead h2{font-family:var(--display);font-weight:400;font-size:24px;margin:0}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:14px}
+.legend label{display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none}
+.legend input{accent-color:var(--ink);width:16px;height:16px}
+.swatch{width:30px;height:0;border-top:3px dashed var(--victor)}
+.swatch.c{border-top:3px solid var(--creature)}
+.swatch.s{border-top:2px dotted var(--creature)}
+svg.map{display:block;width:100%;height:auto;border-radius:6px;background:var(--sea)}
+.map .land{fill:#ead9b0;stroke:#6b5640;stroke-width:.6}
+.map .grat{fill:none;stroke:#8b8a7a;stroke-width:.45;opacity:.55}
+.route{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.route.v{stroke:var(--victor);stroke-width:2.4;stroke-dasharray:8 5}
+.route.c{stroke:var(--creature);stroke-width:2.8}
+.route.s{stroke:var(--creature);stroke-width:1.6;stroke-dasharray:1.5 5;opacity:.9}
+.hide-v .route.v,.hide-c .route.c,.hide-c .route.s{display:none}
+.maplabel{font-family:var(--sc);font-size:14px;fill:var(--ink-soft);letter-spacing:.04em}
+.seal-label{font-family:var(--display);font-size:15px;fill:var(--ink);paint-order:stroke;stroke:#f3e7cb;stroke-width:3.5px;stroke-linejoin:round}
+.sealabel{font-family:var(--display);font-style:italic;font-size:15px;fill:#6f7f7a;letter-spacing:.12em}
+.marker{cursor:pointer}
+.marker circle.base{fill:var(--parch);stroke:var(--ink);stroke-width:2}
+.marker text{font-family:var(--display);font-size:15px;fill:var(--ink);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.marker.visited circle.base{fill:#f6d78e}
+.marker.done circle.base{fill:var(--ink)}
+.marker.done text{fill:var(--parch)}
+.marker .halo{fill:none;stroke:var(--candle);stroke-width:3;opacity:0}
+.marker.active .halo{opacity:1}
+.marker:hover circle.base,.marker:focus-visible circle.base{stroke:var(--candle);stroke-width:3}
+.marker:focus{outline:none}
+.inset-frame{fill:#efe2c2;stroke:var(--ink);stroke-width:1.4}
+.inset-title{font-family:var(--sc);font-size:15px;fill:var(--ink);letter-spacing:.05em}
+.lake{fill:var(--sea);stroke:#6b5640;stroke-width:.8}
+.river{fill:none;stroke:#8fa3a0;stroke-width:1.6}
+.mount{fill:#d9c79e;stroke:#6b5640;stroke-width:.8}
+.mapnote{font-size:13.5px;color:var(--ink-soft);margin:8px 6px 2px}
+
+.panel{background:var(--parch);color:var(--ink);border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,.45), inset 0 0 0 1px #c9b48a;
+  position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto;scroll-behavior:smooth}
+.panel-in{padding:18px 22px 22px}
+.stopnav{display:flex;flex-wrap:wrap;gap:6px;padding:12px 22px;border-bottom:1px solid #d3bf95;background:var(--parch-2);position:sticky;top:0;z-index:2}
+.stopnav button{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--ink);background:var(--parch);color:var(--ink);font-family:var(--display);font-size:15px;cursor:pointer;padding:0;font-variant-numeric:tabular-nums}
+.stopnav button.visited{background:#f6d78e}
+.stopnav button.done{background:var(--ink);color:var(--parch)}
+.stopnav button[aria-current="true"]{box-shadow:0 0 0 3px var(--candle)}
+.stophead .meta{font-family:var(--sc);letter-spacing:.05em;color:var(--ink-soft);font-size:14px;margin:0}
+.stophead h2{font-family:var(--display);font-weight:400;font-size:32px;line-height:1.05;margin:4px 0 6px;text-wrap:balance}
+.stophead .place{margin:0;font-style:italic;color:var(--ink-soft)}
+.chips{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.chip{font-size:13px;padding:2px 10px;border-radius:999px;border:1px solid currentColor}
+.chip.V{color:var(--victor)} .chip.C{color:var(--creature)} .chip.W{color:var(--walton)}
+.task{margin-top:22px}
+.task h3{font-family:var(--sc);font-weight:400;font-size:18px;letter-spacing:.05em;margin:0 0 4px;display:flex;align-items:baseline;gap:10px;border-bottom:1px solid #d3bf95;padding-bottom:4px}
+.task h3 small{font-family:var(--body);font-size:13px;color:var(--ink-soft);letter-spacing:0;margin-left:auto}
+.q{margin:14px 0 0}
+.q p.qt{margin:0 0 8px;font-weight:500}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;background:#f8f0dc;border:1px solid #c9b48a;color:var(--ink);border-radius:6px;padding:7px 11px;cursor:pointer;line-height:1.35;font-size:15.5px}
+.opt:hover:not([disabled]){border-color:var(--ink);background:#fff8e6}
+.opt[disabled]{cursor:default}
+.opt.right{background:#e3eedb;border-color:var(--ok);color:#1f461f}
+.opt.wrong{background:#f4dcd8;border-color:var(--bad);color:#6d1a1e;text-decoration:line-through;text-decoration-thickness:1px}
+.fb{margin:8px 0 0;font-size:15px;padding:8px 11px;border-left:3px solid var(--ink-soft);background:#efe2c4;border-radius:0 6px 6px 0}
+.fb b{font-weight:600}
+.fb.ok b{color:var(--ok)} .fb.no b{color:var(--bad)}
+blockquote{margin:12px 0 10px;padding:10px 14px 10px 16px;background:#fbf4e2;border-left:4px solid var(--candle);font-family:var(--display);font-size:18.5px;line-height:1.4;font-style:italic;border-radius:0 6px 6px 0}
+blockquote input{font-family:var(--body);font-style:normal;font-size:16px;width:9.5em;padding:1px 8px;border:none;border-bottom:2px solid var(--ink);background:#f1e2bd;color:var(--ink);border-radius:3px 3px 0 0}
+blockquote input.right{background:#e3eedb;border-color:var(--ok)} blockquote input.wrong{background:#f4dcd8;border-color:var(--bad)}
+.btn{display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:var(--parch);border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:15px}
+.btn:hover{background:#4b3825}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.btn.light{background:var(--bone);color:var(--night)}
+.btn.lightghost{background:transparent;color:var(--bone);border:1.5px solid var(--bone-dim)}
+.an{margin-top:12px;border-left:4px solid var(--victor);padding:2px 0 2px 12px}
+.an.C{border-color:var(--creature)}
+.an label{display:block;font-weight:600;font-size:15.5px}
+.an label span{display:block;font-weight:400;color:var(--ink-soft);font-size:15px;margin-top:2px}
+textarea{width:100%;min-height:96px;margin-top:6px;padding:8px 10px;border:1px solid #c9b48a;border-radius:6px;background:#fbf4e2;color:var(--ink);resize:vertical;line-height:1.45}
+.wc{font-size:13px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.keys{margin-top:12px;display:grid;gap:10px}
+.keys div{background:#efe2c4;border-radius:6px;padding:8px 12px 8px 12px;font-size:15px}
+.keys h4{margin:0 0 4px;font-family:var(--sc);font-weight:400;font-size:15px;letter-spacing:.04em}
+.keys ul{margin:0;padding-left:18px}
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:26px;padding-top:14px;border-top:1px solid #d3bf95}
+.status{font-size:14px;color:var(--ink-soft);margin-top:8px}
+
+section.final{margin:34px 0 0}
+section.final > h2{font-family:var(--display);font-weight:400;font-size:40px;margin:0 0 4px}
+section.final > p{color:var(--bone-dim);margin:0 0 16px;max-width:75ch}
+.finalgrid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.card{background:var(--night-2);border:1px solid #3a3129;border-radius:10px;padding:18px 20px}
+.card h3{font-family:var(--display);font-weight:400;font-size:26px;margin:0 0 4px}
+.card .hint{color:var(--bone-dim);font-size:15px;margin:0 0 12px}
+.olist{list-style:none;margin:0;padding:0;display:grid;gap:6px;counter-reset:o}
+.olist li{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;background:#2b241d;border:1px solid #43382d;border-radius:6px;padding:6px 8px;counter-increment:o;font-size:15.5px}
+.olist li::before{content:counter(o);font-family:var(--display);font-size:18px;color:var(--candle);text-align:center;font-variant-numeric:tabular-nums}
+.olist li.right{border-color:#5c8f4f;background:#26301f}
+.olist li.wrong{border-color:#8d3a3a;background:#34201f}
+.mv{display:flex;gap:4px}
+.mv button{width:30px;height:28px;border-radius:5px;border:1px solid #5a4c3e;background:#3a3129;color:var(--bone);cursor:pointer;padding:0}
+.mv button:hover{border-color:var(--candle)}
+.mirror{display:grid;gap:8px}
+.mrow{display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:center;background:#2b241d;border:1px solid #43382d;border-radius:6px;padding:8px 10px;font-size:15.5px}
+.seg{display:flex;gap:4px}
+.seg button{border:1px solid #5a4c3e;background:#3a3129;color:var(--bone);border-radius:5px;padding:3px 9px;cursor:pointer;font-size:14px}
+.seg button[data-v="V"]{color:#f0a3a3} .seg button[data-v="C"]{color:#8fd1c6}
+.seg button.right{background:#2f4a26;border-color:#5c8f4f;color:#d6f0c9}
+.seg button.wrong{background:#4a2423;border-color:#8d3a3a;color:#f2c8c4}
+.seg button[disabled]{cursor:default}
+.mfb{grid-column:1/-1;font-size:14px;color:var(--bone-dim)}
+.essay select,.essay textarea{background:#2b241d;color:var(--bone);border:1px solid #4a3f33}
+.essay select{width:100%;padding:8px 10px;border-radius:6px}
+.essay textarea{min-height:220px}
+.essay .req{font-size:14.5px;color:var(--bone-dim);margin:10px 0 0;padding-left:18px}
+.wcd{font-size:14px;color:var(--bone-dim);margin-top:4px;font-variant-numeric:tabular-nums}
+.submit{margin:24px 0 50px}
+.submit .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+#exportBox{width:100%;min-height:160px;margin-top:12px;background:#2b241d;color:var(--bone);border:1px solid #4a3f33;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;display:none}
+.toast{font-size:14.5px;color:var(--candle)}
+footer{color:#8a7e6b;font-size:13.5px;padding:0 0 30px}
+@media (max-width:1080px){.atlas{grid-template-columns:1fr}.panel,.mapcard{position:static;max-height:none}.how{grid-template-columns:repeat(2,1fr)}.finalgrid{grid-template-columns:1fr}}
+@media (max-width:640px){header.top{grid-template-columns:1fr}.how{grid-template-columns:1fr}.panel-in{padding:16px}.stophead h2{font-size:27px}.mrow{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+.wrap{max-width:1100px}
+.intro{display:grid;grid-template-columns:1fr auto;gap:20px 32px;align-items:end;padding:28px 0 6px}
+.finalgrid{margin-top:22px}
+.done-card{margin:22px 0 50px}
+.steps{margin:6px 0 14px;padding-left:20px;color:var(--bone-dim);font-size:15.5px}
+.steps li{margin:2px 0}
+.steps b{color:var(--bone)}
+.btn.big{font-size:17px;padding:11px 20px}
+.missing{font-size:14.5px;color:#f0a3a3;margin-top:10px}
+@media (max-width:640px){.intro{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="intro">
+  <div>
+    <p class="eyebrow">Mary Shelley · Frankenstein; or, The Modern Prometheus</p>
+    <h1>The Big Picture</h1>
+    <p class="sub">Three tasks on the whole novel: the order of events, Victor and the Creature as mirror images, and a short essay on the novel’s themes and central idea. When you finish, download your answers as a Word file and send it to your teacher.</p>
+  </div>
+  <div class="student">
+    <label for="studentName">Your name and group</label>
+    <input id="studentName" type="text" placeholder="e.g. Olena Koval, group 31" autocomplete="name">
+    <div class="meters" aria-live="polite"><span>Tasks done <b id="mDone">0 / 3</b></span><span>Auto-checked <b id="mScore">0 / 0</b></span></div>
+    <div class="bar" aria-hidden="true"><span id="mBar"></span></div>
+  </div>
+</header>
+
+<section class="final" id="final">
+  <div class="finalgrid">
+    <div class="card">
+      <h3>A. Put the events in order</h3>
+      <p class="hint">Arrange the events in the order in which they happen in the story world (not the order in which the novel tells them). Use the arrows, then check. You may check as many times as you need.</p>
+      <ol class="olist" id="olist"></ol>
+      <div style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap"><button class="btn light" id="checkOrder">Check order</button><span class="toast" id="orderMsg" aria-live="polite"></span></div>
+    </div>
+    <div class="card">
+      <h3>B. Mirror images</h3>
+      <p class="hint">Shelley builds Victor and the Creature as doubles. For each statement, decide: is it true of <b style="color:#f0a3a3">Victor</b>, of the <b style="color:#8fd1c6">Creature</b>, or of <b>Both</b>? One try each.</p>
+      <div class="mirror" id="mirror"></div>
+    </div>
+    <div class="card essay" style="grid-column:1/-1">
+      <h3>C. Theme and idea: final reflection</h3>
+      <p class="hint">Choose one question and write a short argued answer.</p>
+      <label for="essayQ" class="hint" style="display:block;margin-bottom:6px">Question</label>
+      <select id="essayQ"></select>
+      <label for="essayT" class="hint" style="display:block;margin:12px 0 0">Your answer</label>
+      <textarea id="essayT" placeholder="State your position in the first sentence, then support it with events and quotations from the novel."></textarea>
+      <div class="wcd" id="essayWc">0 words</div>
+      <ul class="req">
+        <li>250–350 words.</li>
+        <li>Refer to at least three key events or places (e.g. the cottage, the Mer de Glace, the Orkneys).</li>
+        <li>Use at least two short quotations from the novel.</li>
+        <li>Discuss both Victor and the Creature.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="card done-card" id="submit">
+  <h3>Submit your work</h3>
+  <ol class="steps">
+    <li>Write your <b>name and group</b> at the top of the page.</li>
+    <li>Click <b>Download as Word</b>. The file with all your answers will be saved to your device.</li>
+    <li><b>Send the file to your teacher</b> (attach it to the assignment or email it).</li>
+  </ol>
+  <div class="row" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <button class="btn light big" id="wordBtn">Download as Word</button>
+    <button class="btn lightghost" id="copyBtn">Copy answers as text</button>
+    <button class="btn lightghost" id="resetBtn">Start again</button>
+  </div>
+  <p class="toast" id="copyMsg" aria-live="polite" style="margin:10px 0 0"></p>
+  <p class="missing" id="missing"></p>
+  <textarea id="exportBox" readonly aria-label="All answers as text"></textarea>
+</section>
+<footer>Quotations and events from Mary Shelley’s Frankenstein (1831 edition), in the public domain.</footer>
+</div>
+
+<script>
+const ORDER = [
+ {id:"a", t:"Caroline Frankenstein dies of scarlet fever."},
+ {id:"b", t:"The Creature comes to life in Ingolstadt."},
+ {id:"c", t:"The Creature discovers fire in the forest."},
+ {id:"d", t:"Felix drives the Creature away from the cottage."},
+ {id:"e", t:"William is murdered near Geneva."},
+ {id:"f", t:"Justine is executed."},
+ {id:"g", t:"Victor and the Creature meet on the Mer de Glace."},
+ {id:"h", t:"Victor destroys the female creature in the Orkneys."},
+ {id:"i", t:"Clerval’s body is found in Ireland."},
+ {id:"j", t:"Elizabeth is killed on her wedding night."},
+ {id:"k", t:"Walton takes the exhausted Victor aboard his ship."}
+];
+const ORDER_START = ["g","d","j","a","i","c","k","f","b","h","e"];
+
+const MIRROR = [
+ {s:"Is abandoned by the one who should have cared for him.", a:"C", f:"Victor flees minutes after giving life; his own parents never abandon him."},
+ {s:"Is shaped by books that guide how he sees himself.", a:"B", f:"Victor: Agrippa and the alchemists. The Creature: Paradise Lost, Plutarch and Werter."},
+ {s:"Compares himself to Milton’s fallen archangel.", a:"B", f:"The Creature at the cottage; Victor on Walton’s ship, comparing himself to the archangel who aspired to omnipotence."},
+ {s:"Begs another for a companion.", a:"C", f:"On the Mer de Glace he asks for a being who will not turn away from him."},
+ {s:"Keeps a silence that costs an innocent woman her life.", a:"V", f:"Victor says nothing at Justine’s trial."},
+ {s:"Destroys the work of his own hands.", a:"V", f:"Victor tears apart the half-finished female in the Orkneys."},
+ {s:"Is driven by revenge.", a:"B", f:"The Creature after the cottage and the Orkneys; Victor after Elizabeth’s death."},
+ {s:"Secretly helps others and gets nothing in return.", a:"C", f:"He gathers wood for the De Laceys and saves a girl from a river, and is shot for it."},
+ {s:"Ends the story utterly alone in the Arctic.", a:"B", f:"Both lose everyone; the ice is the final image of isolation."}
+];
+
+const ESSAYS = [
+ "Who is the real monster in Frankenstein: Victor, the Creature, or society?",
+ "Is the Creature born evil, or made evil? Use the stops on the map as evidence.",
+ "What does Frankenstein suggest about the dangers of ambition and forbidden knowledge? Compare Victor and Walton.",
+ "Why is the novel subtitled The Modern Prometheus?"
+];
+
+const STORE="frankenstein-big-picture-v1";
+let S={name:"",order:null,orderChecked:false,mirror:{},essayQ:0,essay:""};
+try{ const raw=localStorage.getItem(STORE); if(raw) S=Object.assign(S,JSON.parse(raw)); }catch(e){}
+function save(){ try{ localStorage.setItem(STORE,JSON.stringify(S)); }catch(e){} }
+const $=id=>document.getElementById(id);
+const words=t=>(t.trim().match(/\S+/g)||[]).length;
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const NM={V:"Victor",C:"Creature",B:"Both"};
+
+function orderScore(){ const c=ORDER.map(o=>o.id); return S.orderChecked ? S.order.filter((id,i)=>c[i]===id).length : 0; }
+function renderOrder(){
+  if(!S.order) S.order=ORDER_START.slice();
+  const ol=$("olist"); ol.innerHTML=""; const correct=ORDER.map(o=>o.id);
+  S.order.forEach((id,i)=>{ const it=ORDER.find(o=>o.id===id); const li=document.createElement("li");
+    if(S.orderChecked) li.classList.add(correct[i]===id?"right":"wrong");
+    li.innerHTML=`<span>${it.t}</span><span class="mv"><button aria-label="Move up" ${i===0?"disabled":""}>↑</button><button aria-label="Move down" ${i===S.order.length-1?"disabled":""}>↓</button></span>`;
+    const [up,dn]=li.querySelectorAll("button");
+    up.onclick=()=>{ [S.order[i-1],S.order[i]]=[S.order[i],S.order[i-1]]; S.orderChecked=false; save(); renderOrder(); meters(); $("olist").children[i-1].querySelector("button").focus(); };
+    dn.onclick=()=>{ [S.order[i+1],S.order[i]]=[S.order[i],S.order[i+1]]; S.orderChecked=false; save(); renderOrder(); meters(); $("olist").children[i+1].querySelectorAll("button")[1].focus(); };
+    ol.appendChild(li); });
+  const n=orderScore();
+  $("orderMsg").textContent = S.orderChecked ? (n===ORDER.length ? "Perfect: every event is in place." : `${n} of ${ORDER.length} events are in the right place. Move the red ones and check again.`) : "";
+}
+$("checkOrder").onclick=()=>{ S.orderChecked=true; save(); renderOrder(); meters(); };
+
+function renderMirror(){
+  const box=$("mirror"); box.innerHTML="";
+  MIRROR.forEach((m,i)=>{ const r=document.createElement("div"); r.className="mrow";
+    r.innerHTML=`<span>${i+1}. ${m.s}</span><span class="seg">${["V","C","B"].map(v=>`<button data-v="${v}">${NM[v]}</button>`).join("")}</span><span class="mfb"></span>`;
+    const show=()=>{ const ch=S.mirror[i]; r.querySelectorAll("button").forEach(b=>{ b.disabled=true; if(b.dataset.v===m.a) b.classList.add("right"); else if(b.dataset.v===ch) b.classList.add("wrong"); });
+      r.querySelector(".mfb").textContent=(ch===m.a?"Correct. ":"Not quite. ")+m.f; };
+    if(S.mirror[i]) show(); else r.querySelectorAll("button").forEach(b=>b.onclick=()=>{ S.mirror[i]=b.dataset.v; save(); show(); meters(); });
+    box.appendChild(r); });
+}
+function renderEssay(){
+  const sel=$("essayQ"); sel.innerHTML=ESSAYS.map((e,i)=>`<option value="${i}">${e}</option>`).join(""); sel.value=S.essayQ;
+  sel.onchange=()=>{ S.essayQ=+sel.value; save(); };
+  const ta=$("essayT"); ta.value=S.essay;
+  const upd=()=>{ S.essay=ta.value; save(); const n=words(S.essay); $("essayWc").textContent=`${n} word${n===1?"":"s"}${n<250?" · aim for 250–350":n>350?" · a little over the limit":" · within the limit"}`; meters(); };
+  ta.addEventListener("input",upd); upd();
+}
+function meters(){
+  let total=0,right=0;
+  MIRROR.forEach((m,i)=>{ if(S.mirror[i]){ total++; if(S.mirror[i]===m.a) right++; } });
+  if(S.orderChecked){ total+=ORDER.length; right+=orderScore(); }
+  const done=(S.orderChecked?1:0)+(Object.keys(S.mirror).length===MIRROR.length?1:0)+(words(S.essay)>=250?1:0);
+  $("mDone").textContent=`${done} / 3`; $("mScore").textContent=`${right} / ${total}`; $("mBar").style.width=(done/3*100)+"%";
+  return {total,right,done};
+}
+function missingList(){
+  const m=[]; if(!S.name.trim()) m.push("your name"); if(!S.orderChecked) m.push("checking Task A");
+  const left=MIRROR.length-Object.keys(S.mirror).length; if(left) m.push(`${left} statement${left>1?"s":""} in Task B`);
+  if(words(S.essay)<250) m.push("an essay of at least 250 words in Task C"); return m;
+}
+function today(){ try{ return new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"}); }catch(e){ return new Date().toDateString(); } }
+
+function buildText(){
+  const m=meters(), L=[];
+  L.push("FRANKENSTEIN — THE BIG PICTURE"); L.push("Student: "+(S.name||"(no name)")); L.push("Date: "+today()); L.push(`Auto-checked answers: ${m.right}/${m.total}`); L.push("");
+  L.push("A. ORDER OF EVENTS"); const c=ORDER.map(o=>o.id);
+  S.order.forEach((id,i)=>L.push(`${i+1}. ${ORDER.find(o=>o.id===id).t}${S.orderChecked?(c[i]===id?"  [correct]":"  [wrong place]"):""}`));
+  L.push(S.orderChecked?`Correct positions: ${orderScore()}/${ORDER.length}`:"(order not checked)"); L.push("");
+  L.push("B. MIRROR IMAGES"); MIRROR.forEach((x,i)=>{ const a=S.mirror[i]; L.push(`${i+1}. ${x.s} — ${a?NM[a]+(a===x.a?" [correct]":" [incorrect; correct: "+NM[x.a]+"]"):"(not answered)"}`); }); L.push("");
+  L.push("C. FINAL REFLECTION"); L.push("Question: "+ESSAYS[S.essayQ]); L.push(`(${words(S.essay)} words)`); L.push(S.essay.trim()||"(no answer)");
+  return L.join("\n");
+}
+function buildDoc(){
+  const m=meters(), c=ORDER.map(o=>o.id);
+  const ok='<span style="color:#2f6b2f">✔</span>', no='<span style="color:#a1252b">✘</span>';
+  let b=`<h1>Frankenstein — The Big Picture</h1>
+  <p class="meta"><b>Student:</b> ${esc(S.name||"—")}<br><b>Date:</b> ${today()}<br><b>Auto-checked answers:</b> ${m.right} / ${m.total}</p>
+  <h2>A. Order of events</h2><table><tr><th>#</th><th>Event</th><th>Check</th></tr>`;
+  S.order.forEach((id,i)=>{ b+=`<tr><td>${i+1}</td><td>${esc(ORDER.find(o=>o.id===id).t)}</td><td>${S.orderChecked?(c[i]===id?ok:no):"—"}</td></tr>`; });
+  b+=`</table><p>${S.orderChecked?`Correct positions: ${orderScore()} / ${ORDER.length}`:"The order was not checked."}</p>
+  <h2>B. Mirror images</h2><table><tr><th>#</th><th>Statement</th><th>Answer</th><th>Check</th></tr>`;
+  MIRROR.forEach((x,i)=>{ const a=S.mirror[i]; b+=`<tr><td>${i+1}</td><td>${esc(x.s)}</td><td>${a?NM[a]:"—"}</td><td>${a?(a===x.a?ok:no+" ("+NM[x.a]+")"):"—"}</td></tr>`; });
+  b+=`</table><h2>C. Final reflection</h2><p><b>Question:</b> ${esc(ESSAYS[S.essayQ])}</p><p class="meta">${words(S.essay)} words</p>`;
+  const paras=(S.essay.trim()||"(no answer)").split(/\n\s*\n|\n/).map(p=>`<p>${esc(p)}</p>`).join("");
+  b+=paras;
+  return `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>Frankenstein — The Big Picture</title>
+  <!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->
+  <style>@page{size:21cm 29.7cm;margin:2cm}body{font-family:"Times New Roman",serif;font-size:12pt;line-height:1.5}h1{font-size:18pt;margin:0 0 6pt}h2{font-size:14pt;margin:16pt 0 6pt}table{border-collapse:collapse;width:100%}td,th{border:1px solid #888;padding:3pt 6pt;font-size:11pt;vertical-align:top;text-align:left}th{background:#eee}.meta{color:#444}p{margin:0 0 8pt}</style></head><body>${b}</body></html>`;
+}
+function fileName(){ const n=(S.name||"student").trim().replace(/[\\/:*?"<>|]+/g,"").replace(/\s+/g,"_").slice(0,60)||"student"; return `Frankenstein_Big_Picture_${n}.doc`; }
+
+$("studentName").value=S.name; $("studentName").addEventListener("input",e=>{ S.name=e.target.value; save(); $("missing").textContent=""; });
+$("wordBtn").onclick=()=>{
+  const miss=missingList();
+  $("missing").textContent = miss.length ? "Before sending, you may still want to complete: "+miss.join(", ")+"." : "";
+  try{
+    const blob=new Blob(["﻿",buildDoc()],{type:"application/msword"});
+    const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=fileName();
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),4000);
+    $("copyMsg").textContent=`The file “${fileName()}” is being saved. Now send it to your teacher. If no file appears, click “Copy answers as text” and paste them into a Word document.`;
+  }catch(e){ $("copyMsg").textContent="Your browser blocked the download. Click “Copy answers as text” and paste them into a Word document."; }
+};
+$("copyBtn").onclick=async()=>{ const txt=buildText(); try{ await navigator.clipboard.writeText(txt); $("copyMsg").textContent="Copied. Paste it into a Word document or your assignment."; }
+  catch(e){ const b=$("exportBox"); b.value=txt; b.style.display="block"; b.focus(); b.select(); $("copyMsg").textContent="Copying is blocked here: the text is selected below, press Ctrl+C (⌘C)."; } };
+let arm=false;
+$("resetBtn").onclick=()=>{ if(!arm){ arm=true; $("resetBtn").textContent="Click again to erase all answers"; setTimeout(()=>{arm=false;$("resetBtn").textContent="Start again";},4000); return; }
+  S={name:"",order:null,orderChecked:false,mirror:{},essayQ:0,essay:""}; save(); $("studentName").value=""; renderOrder(); renderMirror(); renderEssay(); meters(); $("copyMsg").textContent=""; $("missing").textContent=""; $("resetBtn").textContent="Start again"; arm=false; };
+renderOrder(); renderMirror(); renderEssay(); meters();
+</script>
+</body>
+</html>
